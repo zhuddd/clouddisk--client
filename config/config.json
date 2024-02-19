@@ -1,0 +1,15 @@
+{
+    "Update": {
+        "CheckUpdateAtStartUp": true
+    },
+    "Folders": {
+        "Download": "d:/Downloads"
+    },
+    "MainWindow": {
+        "DpiScale": 1.25
+    },
+    "QFluentWidgets": {
+        "ThemeColor": "#ff009faa",
+        "ThemeMode": "Light"
+    }
+}
