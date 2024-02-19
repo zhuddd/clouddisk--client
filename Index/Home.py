@@ -57,7 +57,7 @@ class Home(MSFluentWindow):
         self.upLoadInterface.taskNum.connect(self.setUploadTaskNum)
 
     def findFile(self, fileName):
-        self.fileInterface.addInterface(fileName,fileName)
+        self.fileInterface.addInterface(f"搜索:{fileName}",fileName)
     def downloadFile(self, file: File):
         self.downLoadInterface.addTask(file.id)
 

@@ -1,3 +1,5 @@
+import time
+
 from PyQt5 import QtCore
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QStackedWidget, QVBoxLayout
@@ -11,12 +13,14 @@ from Common.StyleSheet import StyleSheet
 from Index import Home
 from views.LoginPage import LoginPage
 from views.RegisterPage import RegisterPage
+from views.UpdataPassword import UpdatePassword
 
 
 class Verify(FramelessWindow):
 
     def __init__(self):
         super().__init__()
+        self.update_password = None
         StyleSheet.VERIFY.apply(self)
         # self.setTitleBar(StandardTitleBar(self))
         self.titleBar.setAttribute(Qt.WA_StyledBackground)
@@ -32,6 +36,7 @@ class Verify(FramelessWindow):
         self.login = LoginPage(self)
         self.register = RegisterPage(self)
 
+
         self.addSubInterface(self.login, '登录', '登录')
         self.addSubInterface(self.register, '注册', '注册')
 
@@ -39,10 +44,11 @@ class Verify(FramelessWindow):
         self.vBoxLayout.addWidget(self.stackedWidget)
         self.vBoxLayout.setContentsMargins(30, self.titleBar.height(), 30, 30)
 
-        self.stackedWidget.setCurrentWidget(self.login)
         self.pivot.setCurrentItem(self.login.objectName())
 
         self.login.signal.connect(self.start)
+        self.login.forget.connect(self.password)
+        self.register.back.connect(self.goLogin)
 
     def addSubInterface(self, widget, objectName, text):
         widget.setObjectName(objectName)
@@ -52,6 +58,18 @@ class Verify(FramelessWindow):
             text=text,
             onClick=lambda: self.stackedWidget.setCurrentWidget(widget)
         )
+
+    def password(self):
+        if self.update_password is None:
+            self.update_password = UpdatePassword(self)
+            self.update_password.back.connect(self.goLogin)
+            self.stackedWidget.addWidget(self.update_password)
+
+        self.stackedWidget.setCurrentWidget(self.update_password)
+
+    def goLogin(self):
+        self.pivot.setCurrentItem(self.login.objectName())
+        self.stackedWidget.setCurrentWidget(self.login)
 
     def start(self):
         self.time = QtCore.QTimer()

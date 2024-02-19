@@ -18,6 +18,8 @@ from Common.config import PAY_MENU, PAY_INFO, PAY_PAY, PAY_SUCCESS, cfg
 def getMenu():
     req = requests.get(PAY_MENU, cookies=DataSaver.get("cookies"))
     datas = req.json()['data']
+    if req.status_code != 200:
+        return []
     return [Menu(i) for i in datas]
 
 

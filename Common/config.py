@@ -32,6 +32,8 @@ BASE_URL = "http://api.cloud.zhuddd.icu"
 # BASE_URL = "http://110.40.174.23"
 LOGIN_URL = BASE_URL + "/account/login"
 REGISTER_URL = BASE_URL + "/account/register"
+CAPTCHA_URL = BASE_URL + "/account/captcha"
+UPDATE_PASSWORD_URL = BASE_URL + "/account/update_password"
 
 FILE_UPLOAD = BASE_URL + "/upload/upload"
 FILE_UPLOAD_CHECK = BASE_URL + "/upload/check"

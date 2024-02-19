@@ -168,6 +168,12 @@ class FilePage(QtWidgets.QWidget, FilePageUi):
             self.filePath.emit((file_path, self.page_data[self.dir.currentItem().routeKey]))
 
     def addInterface(self, text: str, n):
+        '''
+        添加页面
+        :param text:  页面名称
+        :param n:  页面id
+        :return:
+        '''
         if not text:
             return
         uid = uuid1().hex

@@ -68,12 +68,12 @@ class DownloadPage(QtWidgets.QWidget, UpDown):
         self.save_history()
 
     def save_history(self):
-        DataSaver.set("download_task_wait", self.task_wait)
-        DataSaver.set("download_task_success", self.task_success)
+        DataSaver.set(f"download_task_wait{DataSaver.get('user')}", self.task_wait)
+        DataSaver.set(f"download_task_success{DataSaver.get('user')}", self.task_success)
 
     def get_history(self):
-        task_wait = DataSaver.get("download_task_wait", [])
-        task_success = DataSaver.get("download_task_success", [])
+        task_wait = DataSaver.get(f"download_task_wait{DataSaver.get('user')}", [])
+        task_success = DataSaver.get(f"download_task_success{DataSaver.get('user')}", [])
         for i in task_wait:
             self.create_download_item(i)
         for i in task_success:

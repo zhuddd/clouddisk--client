@@ -14,7 +14,7 @@ def success(parent,text: str ,duration=2000):
     )
 
 
-def warning(parent,text: str,duration:2000):
+def warning(parent,text: str,duration=2000):
     InfoBar.warning(
         title="",
         content=text,

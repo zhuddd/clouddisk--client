@@ -70,12 +70,12 @@ class UploadPage(QtWidgets.QWidget, UpDown):
         self.save_history()
 
     def save_history(self):
-        DataSaver.set("upload_task_wait", self.task_wait)
-        DataSaver.set("upload_task_success", self.task_success)
+        DataSaver.set(f"upload_task_wait{DataSaver.get('user')}", self.task_wait)
+        DataSaver.set(f"upload_task_success{DataSaver.get('user')}", self.task_success)
 
     def get_history(self):
-        task_wait = DataSaver.get("upload_task_wait", [])
-        task_success = DataSaver.get("upload_task_success", [])
+        task_wait = DataSaver.get(f"upload_task_wait{DataSaver.get('user')}", [])
+        task_success = DataSaver.get(f"upload_task_success{DataSaver.get('user')}", [])
         for i in task_wait:
             self.create_upload_item(i)
         for i in task_success:

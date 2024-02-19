@@ -15,6 +15,7 @@ from Common.MyRequests import MyRequestThread
 
 class LoginPage(QtWidgets.QWidget, LoginUi):
     signal = QtCore.pyqtSignal()
+    forget = QtCore.pyqtSignal()
 
     def __init__(self, *args, **kwargs):
         super(LoginPage, self).__init__(*args, **kwargs)
@@ -28,6 +29,7 @@ class LoginPage(QtWidgets.QWidget, LoginUi):
         self.email.setCompleter(self.completer)
 
         self.pushbutton.clicked.connect(self.login)
+        self.fogetPassword.clicked.connect(self.forget.emit)
         self.request = None
         self.loginBySession()
 
@@ -37,7 +39,7 @@ class LoginPage(QtWidgets.QWidget, LoginUi):
             session = dict_from_cookiejar(cookie).get("session")
             if session is None or session == {}:
                 return
-            success(self, "正在登录")
+            success(self.parent(), "正在登录")
 
             def s():
                 if not self.request or not self.request.isRunning() and session:
@@ -62,7 +64,7 @@ class LoginPage(QtWidgets.QWidget, LoginUi):
         email = self.email.text()
         password = self.password.text()
         if email == "" or password == "":
-            error(self, "邮箱或密码为空")
+            error(self.parent(), "邮箱或密码为空")
             return
         password = hashlib.md5(password.encode()).hexdigest()
         if not self.request or not self.request.isRunning():
@@ -81,14 +83,14 @@ class LoginPage(QtWidgets.QWidget, LoginUi):
 
     def onError(self, s: dict):
         self.pushbutton.setDisabled(False)
-        error(self, s.get("message"))
+        error(self.parent(), s.get("message"))
 
     def responseData(self, response):
         try:
             self.pushbutton.setDisabled(False)
             response = response.json()
             if response["status"]:
-                success(self, "登录成功")
+                success(self.parent(), "登录成功")
                 email = response["data"]["email"]
                 DataSaver.update("accounts", email)
                 DataSaver.set("user", email)
@@ -96,10 +98,10 @@ class LoginPage(QtWidgets.QWidget, LoginUi):
                 self.signal.emit()
             else:
                 DataSaver.set("cookies", None)
-                error(self, response["data"]["error"])
+                error(self.parent(), response["data"]["error"])
         except Exception as e:
             print("responseData", response, e)
-            error(self, "网络异常")
+            error(self.parent(), "网络异常")
 
 # if __name__ == '__main__':
 #     import sys

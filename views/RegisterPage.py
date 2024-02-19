@@ -1,4 +1,5 @@
 from PyQt5 import QtWidgets
+from PyQt5.QtCore import pyqtSignal
 
 from Common.StyleSheet import StyleSheet
 from Common.Tost import warning, success, error
@@ -10,6 +11,7 @@ from Common.MyRequests import MyRequestThread
 
 
 class RegisterPage(QtWidgets.QWidget, RegisterUi):
+    back = pyqtSignal()
     def __init__(self,*args,**kwargs):
         super(RegisterPage, self).__init__(*args, **kwargs)
         self.setupUi(self)
@@ -23,10 +25,10 @@ class RegisterPage(QtWidgets.QWidget, RegisterUi):
         password = self.password.text()
         password2 = self.password_2.text()
         if email == "":
-            warning(self, "邮箱为空")
+            warning(self.parent(), "邮箱为空")
             return
         if password != password2 or password == "":
-            warning(self, "密码不一致或为空")
+            warning(self.parent(), "密码不一致或为空")
             return
         password = hashlib.md5(password.encode()).hexdigest()
         if not self.request or not self.request.isRunning():
@@ -47,13 +49,14 @@ class RegisterPage(QtWidgets.QWidget, RegisterUi):
         self.pushbutton.setDisabled(False)
         data = s.json()
         if data["status"]:
-            success(self, "注册成功")
+            self.back.emit()
+            success(self.parent(), "注册成功")
         else:
-            warning(self, data["data"]["error"])
+            warning(self.parent(), data["data"]["error"])
 
     def onError(self, s: dict):
         self.pushbutton.setDisabled(False)
-        error(self, s.get("message"))
+        error(self.parent(), s.get("message"))
 
 
 
