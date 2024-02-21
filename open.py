@@ -1,6 +1,6 @@
-import os
 import subprocess
 import sys
+from pathlib import Path
 
 import psutil
 import win32file
@@ -9,8 +9,11 @@ import time
 
 
 def connect_to_named_pipe():
-    pipe_name = r'\\.\pipe\zhuddd_cloud'
+    pipe_name = r'\\.\pipe\cloud'
+    now = time.time()
     while True:
+        if time.time() - now > 60 * 5:
+            raise Exception("Timeout")
         try:
             pipe = win32file.CreateFile(
                 pipe_name,
@@ -44,13 +47,6 @@ def send_data_to_process(pipe, data):
     data_bytes = data.encode('utf-8')
     win32file.WriteFile(pipe, data_bytes)
 
-def get_self_path():
-    if getattr(sys, 'frozen', False):
-        # 如果是编译后的程序，使用 sys.executable 获取可执行文件的路径
-        return os.path.dirname(sys.executable)
-    else:
-        # 如果是直接运行的脚本，使用 __file__ 获取脚本文件的路径
-        return os.path.dirname(os.path.realpath(__file__))
 
 def start_process(process_path):
     try:
@@ -60,9 +56,11 @@ def start_process(process_path):
 
 
 if __name__ == "__main__":
-    process_name = "test.exe"
-    process_path = "D:\Desktop\PyQt-Fluent-Widgets-PyQt5\out\\test.dist\\test.exe"
+    process_name = "cloud.exe"
+    process_path = str(Path(sys.argv[0]).resolve().parent / 'cloud.exe')
+    print(process_path)
+    print(sys.argv)
     if not is_process_running(process_name):
         start_process(process_path)
     pipe = connect_to_named_pipe()
-    send_data_to_process(pipe, sys.argv)
+    send_data_to_process(pipe, sys.argv[1:])

@@ -2,6 +2,9 @@ from pathlib import Path
 
 from qfluentwidgets import (qconfig, QConfig, ConfigItem, OptionsConfigItem, BoolValidator,
                             OptionsValidator, Theme, FolderValidator)
+
+
+
 def DownloadDir():
     import winreg
     # 打开Windows注册表

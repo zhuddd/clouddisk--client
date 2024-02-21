@@ -21,7 +21,7 @@ def get_self_path():
         return os.path.dirname(os.path.realpath(__file__))
 
 def create_named_pipe():
-    pipe_name = r'\\.\pipe\zhuddd_cloud'
+    pipe_name = r'\\.\pipe\cloud'
     pipe = win32pipe.CreateNamedPipe(
         pipe_name,
         win32pipe.PIPE_ACCESS_DUPLEX,
@@ -48,14 +48,14 @@ def read_from_pipe(pipe):
 
 def create_registry_entry():
     try:
-        key = winreg.OpenKey(winreg.HKEY_CLASSES_ROOT, r"test", 0, winreg.KEY_WRITE)
+        key = winreg.OpenKey(winreg.HKEY_CLASSES_ROOT, r"cloud", 0, winreg.KEY_WRITE)
     except FileNotFoundError:
-        key = winreg.CreateKey(winreg.HKEY_CLASSES_ROOT, r"test")
+        key = winreg.CreateKey(winreg.HKEY_CLASSES_ROOT, r"cloud")
     winreg.SetValueEx(key, "URL Protocol", 0, winreg.REG_SZ, "")
-    winreg.SetValueEx(key, "", 0, winreg.REG_SZ, "URL:test")
+    winreg.SetValueEx(key, "", 0, winreg.REG_SZ, "URL:cloud")
     winreg.CloseKey(key)
 
-    key = winreg.CreateKey(winreg.HKEY_CLASSES_ROOT, r"test\shell\open\command")
+    key = winreg.CreateKey(winreg.HKEY_CLASSES_ROOT, r"cloud\shell\open\command")
     winreg.SetValueEx(key, "", 0, winreg.REG_SZ, '"'+get_self_path()+"/"+sys.argv[0].split("/")[-1]+'"' + ' "%1"')
     winreg.CloseKey(key)
 
@@ -68,7 +68,7 @@ if __name__ == "__main__":
     start_server()
 
 # 打包命令
-# nuitka --mingw64 --standalone --show-progress --show-memory --plugin-enable=pylint-warnings --output-dir=out demo.py
+# nuitka --mingw --standalone --show-progress --output-dir=../out cloud.py
 
 # 打包命令
-# nuitka --mingw --follow-import-to=test_pipe.py --windows-disable-console  test_pipe.py
+# nuitka --mingw --follow-imports --windows-disable-console --output-dir=../out  open.py

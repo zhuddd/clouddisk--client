@@ -11,6 +11,7 @@ from qframelesswindow import StandardTitleBar, TitleBarBase, TitleBar
 from Common.DataSaver import DataSaver
 from Common.HomeTitleBar import HomeTitleBar
 from Common.StyleSheet import StyleSheet
+from Common.pipe_msg import PipeMsg
 from components.ProfileCard import ProfileCard
 
 from Common.File import File
@@ -22,11 +23,11 @@ from views.Setting import Setting
 from views.UploadPage import UploadPage
 
 
-
 class Home(MSFluentWindow):
 
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.pipe = None
         self.setObjectName("mainWindow")
         self.InfoPage = None
         self.verify = None
@@ -45,7 +46,13 @@ class Home(MSFluentWindow):
         self.initWindow()
         self.initNavigation()
         self.setSlot()
+        self.init_pipe()
         StyleSheet.HOME.apply(self)
+
+    def init_pipe(self):
+        self.pipe = PipeMsg(self)
+        self.pipe.msg.connect(lambda s: print('pipe_msg:',s))
+        self.pipe.start()
 
     def setSlot(self):
         self.fileInterface.filePath.connect(self.upLoadInterface.addTask)
@@ -57,7 +64,8 @@ class Home(MSFluentWindow):
         self.upLoadInterface.taskNum.connect(self.setUploadTaskNum)
 
     def findFile(self, fileName):
-        self.fileInterface.addInterface(f"搜索:{fileName}",fileName)
+        self.fileInterface.addInterface(f"搜索:{fileName}", fileName)
+
     def downloadFile(self, file: File):
         self.downLoadInterface.addTask(file.id)
 
@@ -120,7 +128,7 @@ class Home(MSFluentWindow):
 
     def initWindow(self):
         self.resize(900, 700)
-        self.newTitleBar=HomeTitleBar(self)
+        self.newTitleBar = HomeTitleBar(self)
         self.setTitleBar(self.newTitleBar)
         self.titleBar.setAttribute(Qt.WA_StyledBackground)
 
@@ -132,6 +140,7 @@ class Home(MSFluentWindow):
         desktop = QApplication.desktop().availableGeometry()
         w, h = desktop.width(), desktop.height()
         self.move(w // 2 - self.width() // 2, h // 2 - self.height() // 2)
+
     def userInfo(self):
         menu = RoundMenu(parent=self)
         card = ProfileCard(menu)
