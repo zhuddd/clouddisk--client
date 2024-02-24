@@ -16,7 +16,7 @@ from components.ProfileCard import ProfileCard
 
 from Common.File import File
 from views.DownloadPage import DownloadPage
-from views.FileInfo import FileInfo
+from views.FilePreview import FilePreview
 from views.FilePage import FilePage
 from views.PayPage import PayPage
 from views.Setting import Setting
@@ -29,7 +29,7 @@ class Home(MSFluentWindow):
         super().__init__(parent)
         self.pipe = None
         self.setObjectName("mainWindow")
-        self.InfoPage = None
+        self.PreviewPage = None
         self.verify = None
         self.download_num = None
         self.upload_num = None
@@ -56,7 +56,7 @@ class Home(MSFluentWindow):
 
     def setSlot(self):
         self.fileInterface.filePath.connect(self.upLoadInterface.addTask)
-        self.fileInterface.fileInfo.connect(self.setFileInfoPage)
+        self.fileInterface.preview.connect(self.setFilePreviewPage)
         self.fileInterface.fileDownload.connect(self.downloadFile)
         self.upLoadInterface.update.connect(self.fileInterface.updatePage)
         self.newTitleBar.searchSignal.connect(self.findFile)
@@ -83,14 +83,14 @@ class Home(MSFluentWindow):
         self.addSubInterface(self.settingInterface, FIF.SETTING, '设置', position=NavigationItemPosition.BOTTOM)
         self.navigationInterface.setCurrentItem(self.fileInterface.objectName())
 
-    def setFileInfoPage(self, file: File):
-        if self.InfoPage is None:
-            self.InfoPage = FileInfo(self)
-            self.addSubInterface(self.InfoPage, FIF.DOCUMENT, '文件预览')
-            self.InfoPage.full.connect(self.full)
-            self.InfoPage.download.connect(self.downloadFile)
-        self.InfoPage.setFile(file)
-        self.stackedWidget.setCurrentWidget(self.InfoPage)
+    def setFilePreviewPage(self, file: File):
+        if self.PreviewPage is None:
+            self.PreviewPage = FilePreview(self)
+            self.addSubInterface(self.PreviewPage, FIF.VIEW, '文件预览')
+            self.PreviewPage.full.connect(self.full)
+            self.PreviewPage.download.connect(self.downloadFile)
+        self.PreviewPage.setFile(file)
+        self.stackedWidget.setCurrentWidget(self.PreviewPage)
 
     def setUploadTaskNum(self, num: int):
         if self.upload_num is None:

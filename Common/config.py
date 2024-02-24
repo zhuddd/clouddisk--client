@@ -4,7 +4,6 @@ from qfluentwidgets import (qconfig, QConfig, ConfigItem, OptionsConfigItem, Boo
                             OptionsValidator, Theme, FolderValidator)
 
 
-
 def DownloadDir():
     import winreg
     # 打开Windows注册表
@@ -12,12 +11,15 @@ def DownloadDir():
                              "Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders")
     download_dir = winreg.QueryValueEx(reg_key, "{374DE290-123F-4565-9164-39C4925E467B}")[0]
     return download_dir
+
+
 class Config(QConfig):
     """ Config of application """
     downloadFolder = ConfigItem("Folders", "Download", DownloadDir(), FolderValidator())
     dpiScale = OptionsConfigItem(
         "MainWindow", "DpiScale", "Auto", OptionsValidator([1, 1.25, 1.5, 1.75, 2, "Auto"]), restart=True)
     checkUpdateAtStartUp = ConfigItem("Update", "CheckUpdateAtStartUp", True, BoolValidator())
+
 
 cfg = Config()
 cfg.themeMode.value = Theme.AUTO
@@ -26,8 +28,8 @@ qconfig.load('config/config.json', cfg)
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 DAT_PATH = BASE_DIR / "dat"
-STYLE_FILE_PATH = BASE_DIR / "Resource"/"qss"
-ICON_PATH = BASE_DIR / "Resource"/"images"
+STYLE_FILE_PATH = BASE_DIR / "Resource" / "qss"
+ICON_PATH = BASE_DIR / "Resource" / "images"
 TEMP_PATH = BASE_DIR / "temp"
 
 # BASE_URL = "http://127.0.0.1"
@@ -57,11 +59,12 @@ FILE_SETFACE = BASE_URL + "/file/setface"
 FILE_PREVIEW = BASE_URL + "/file/preview"
 FILE_GET_KEY = BASE_URL + "/file/getkey"
 
+FILE_SHARE_NEW = BASE_URL + "/share/new"
+FILE_SHARE_GET = BASE_URL + "/share/get"
+
 PAY_MENU = BASE_URL + "/pay/menu"
 PAY_INFO = BASE_URL + "/pay/info"
 PAY_PAY = BASE_URL + "/pay/pay"
 PAY_SUCCESS = BASE_URL + "/pay/paysuccess"
-
-
 
 STYLE_TYPE = "home.qss"

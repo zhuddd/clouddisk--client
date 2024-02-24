@@ -11,7 +11,7 @@ from Common.StyleSheet import StyleSheet
 from Common.config import FILE_PREVIEW,FILE_GET_KEY, cfg
 
 
-class FileInfo(QWebEngineView):
+class FilePreview(QWebEngineView):
     download = pyqtSignal(File)
     full = pyqtSignal(bool)
 

@@ -26,6 +26,7 @@ def is_admin():
     except:
         return False
 
+
 def open_app_path():
     return str(Path(sys.argv[0]).resolve().parent / 'open.exe')
 
@@ -52,6 +53,7 @@ if cfg.get(cfg.dpiScale) == "Auto":
     QApplication.setHighDpiScaleFactorRoundingPolicy(
         Qt.HighDpiScaleFactorRoundingPolicy.PassThrough)
     QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
+    print("Auto", Qt.HighDpiScaleFactorRoundingPolicy.PassThrough, Qt.AA_EnableHighDpiScaling)
 else:
     os.environ["QT_ENABLE_HIGHDPI_SCALING"] = "0"
     os.environ["QT_SCALE_FACTOR"] = str(cfg.get(cfg.dpiScale))

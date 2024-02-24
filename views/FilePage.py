@@ -13,15 +13,17 @@ from Ui.FilePageUi import FilePageUi
 from Common.GetDir import GetDir
 from components.IconCard import IconCard
 from Common.File import File
+from views.SharePage import SharePage
 
 
 class FilePage(QtWidgets.QWidget, FilePageUi):
     filePath = QtCore.pyqtSignal(tuple)
-    fileInfo = QtCore.pyqtSignal(File)
+    preview = QtCore.pyqtSignal(File)
     fileDownload = QtCore.pyqtSignal(File)
 
     def __init__(self, *args, **kwargs):
         super(FilePage, self).__init__(*args, **kwargs)
+        self.sharePage = None
         self.disposable_key = False
         self.setupUi(self)
         self.setObjectName("FilePage")
@@ -52,7 +54,8 @@ class FilePage(QtWidgets.QWidget, FilePageUi):
         self.delete_action = None
         self.rename_action = None
         self.new_folder_action = None
-        self.about_action = None
+        self.preview_action = None
+        self.share_action=None
         self.initAction()
 
 
@@ -73,8 +76,10 @@ class FilePage(QtWidgets.QWidget, FilePageUi):
         self.rename_action.triggered.connect(self.renameAction)
         self.new_folder_action = Action(FIF.FOLDER_ADD, '新建文件夹')
         self.new_folder_action.triggered.connect(self.newfolderAction)
-        self.about_action = Action(FIF.INFO, '关于')
-        self.about_action.triggered.connect(self.aboutAction)
+        self.preview_action = Action(FIF.VIEW, '预览')
+        self.preview_action.triggered.connect(self.viewAction)
+        self.share_action = Action(FIF.SHARE, '分享')
+        self.share_action.triggered.connect(self.shareAction)
 
     def downloadAction(self):
         if self.tmp is not None:
@@ -148,9 +153,15 @@ class FilePage(QtWidgets.QWidget, FilePageUi):
             self.updatePage()
         self.tmp = None
 
-    def aboutAction(self):
-        self.fileInfo.emit(self.tmp)
+    def viewAction(self):
+        self.preview.emit(self.tmp)
         self.tmp = None
+
+    def shareAction(self):
+        file=self.tmp
+        self.sharePage=SharePage(file)
+        self.tmp = None
+        self.sharePage.show()
 
     def dragEnterEvent(self, event):
         key = self.dir.currentItem().routeKey
@@ -212,7 +223,7 @@ class FilePage(QtWidgets.QWidget, FilePageUi):
         if data.folder:
             self.addInterface(data.name, data.id)
         else:
-            self.fileInfo.emit(data)
+            self.preview.emit(data)
 
     def contextMenuEvent(self, e, file: File = None):
         self.tmp = file
@@ -227,5 +238,6 @@ class FilePage(QtWidgets.QWidget, FilePageUi):
             menu.addAction(self.delete_action)
             menu.addAction(self.rename_action)
             menu.addAction(self.download_action)
-            menu.addAction(self.about_action)
+            menu.addAction(self.preview_action)
+            menu.addAction(self.share_action)
         menu.exec(e.globalPos(), aniType=MenuAnimationType.DROP_DOWN)

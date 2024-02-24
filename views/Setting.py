@@ -42,7 +42,7 @@ class Setting(ScrollArea):
             self.tr("更改应用程序的外观"),
             texts=[
                 self.tr('浅色'), self.tr('深色'),
-                self.tr('使用系统设置')
+                self.tr('使用系统设置'),
             ],
             parent=self.personalGroup
         )
@@ -53,7 +53,7 @@ class Setting(ScrollArea):
             self.tr("更改小部件和字体的大小"),
             texts=[
                 "100%", "125%", "150%", "175%", "200%",
-                self.tr("使用系统设置")
+                self.tr("使用系统设置"),
             ],
             parent=self.personalGroup
         )
@@ -62,7 +62,6 @@ class Setting(ScrollArea):
         self.__initWidget()
 
     def __initWidget(self):
-        self.resize(1000, 800)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setViewportMargins(0, 80, 0, 20)
         self.setWidget(self.scrollWidget)
