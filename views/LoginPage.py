@@ -103,16 +103,4 @@ class LoginPage(QtWidgets.QWidget, LoginUi):
             print("responseData", response, e)
             error(self.parent(), "网络异常")
 
-# if __name__ == '__main__':
-#     import sys
-#     from PyQt5.QtWidgets import QApplication
-#     # enable dpi scale
-#     QApplication.setHighDpiScaleFactorRoundingPolicy(
-#         Qt.HighDpiScaleFactorRoundingPolicy.PassThrough)
-#     QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
-#     QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps)
-#
-#     app = QApplication(sys.argv)
-#     w = View()
-#     w.show()
-#     app.exec_()
+

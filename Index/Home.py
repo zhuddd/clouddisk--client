@@ -19,6 +19,7 @@ from views.DownloadPage import DownloadPage
 from views.FilePreview import FilePreview
 from views.FilePage import FilePage
 from views.PayPage import PayPage
+from views.SaveShare import SaveShare
 from views.Setting import Setting
 from views.UploadPage import UploadPage
 
@@ -27,6 +28,7 @@ class Home(MSFluentWindow):
 
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.save_share = None
         self.pipe = None
         self.setObjectName("mainWindow")
         self.PreviewPage = None
@@ -51,7 +53,7 @@ class Home(MSFluentWindow):
 
     def init_pipe(self):
         self.pipe = PipeMsg(self)
-        self.pipe.msg.connect(lambda s: print('pipe_msg:',s))
+        self.pipe.msg.connect(self.saveShare)
         self.pipe.start()
 
     def setSlot(self):
@@ -65,9 +67,18 @@ class Home(MSFluentWindow):
 
     def findFile(self, fileName):
         self.fileInterface.addInterface(f"搜索:{fileName}", fileName)
+        self.navigationInterface.setCurrentItem(self.fileInterface.objectName())
+        self.stackedWidget.setCurrentWidget(self.fileInterface)
 
     def downloadFile(self, file: File):
         self.downLoadInterface.addTask(file.id)
+
+    def saveShare(self,msg):
+        if self.save_share is not None:
+            self.save_share.close()
+            self.save_share = None
+        self.save_share=SaveShare(msg)
+        self.save_share.show()
 
     def initNavigation(self):
         self.addSubInterface(self.fileInterface, FIF.HOME, 'Home', FIF.HOME_FILL)
