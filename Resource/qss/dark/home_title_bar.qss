@@ -1,7 +1,6 @@
-
 QWidget {
-    background-color: transparent;
-    border: none;
+    background: transparent;
+    font: 13px 'Segoe UI', 'Microsoft YaHei', 'PingFang SC';
     color: white;
 }
 MinimizeButton {
@@ -12,7 +11,6 @@ MinimizeButton {
     qproperty-pressedColor: white;
     qproperty-pressedBackgroundColor: rgba(255, 255, 255, 51)
 }
-
 
 MaximizeButton {
     qproperty-normalColor: white;
@@ -26,8 +24,4 @@ MaximizeButton {
 CloseButton {
     qproperty-normalColor: white;
     qproperty-normalBackgroundColor: transparent;
-}
-
-StandardTitleBar > QLabel {
-    color: white;
 }

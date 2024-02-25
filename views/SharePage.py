@@ -3,18 +3,21 @@ from PyQt5 import QtWidgets
 from PyQt5.QtCore import QDate, Qt
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QGridLayout, QVBoxLayout, QLabel
 from qfluentwidgets import ZhDatePicker, ScrollArea, RadioButton, LineEdit, PushButton
+from qfluentwidgets.components.widgets.frameless_window import FramelessWindow
 
 from Common import config
 from Common.DataSaver import dataSaver
 from Common.File import File
+from Common.StyleSheet import StyleSheet
 from Common.Tost import error, success
 from components.IconCard import IconCard
 
 
-class SharePage(ScrollArea):
+class SharePage(FramelessWindow):
 
     def __init__(self, file: File = None, parent=None):
         super().__init__(parent=parent)
+        StyleSheet.SHARE.apply(self)
         self.file = file
 
         self.file_card = IconCard(self, self.file)
@@ -63,10 +66,11 @@ class SharePage(ScrollArea):
     def initWindow(self):
         self.setWindowTitle("分享")
         self.resize(400, 400)
-        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.setFrameShape(QtWidgets.QFrame.NoFrame)
-        self.setViewportMargins(0, 80, 0, 20)
-        self.setWidgetResizable(True)
+        self.vBoxLayout.setContentsMargins(30, self.titleBar.height(), 30, 30)
+        # self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        # self.setFrameShape(QtWidgets.QFrame.NoFrame)
+        # self.setViewportMargins(0, 80, 0, 20)
+        # self.setWidgetResizable(True)
 
     def setSlot(self):
         self.set_time2.clicked.connect(self.customTime)
@@ -133,6 +137,7 @@ class SharePage(ScrollArea):
             self)
         self.link_label.setOpenExternalLinks(True)
         self.link_label.setTextInteractionFlags(Qt.TextSelectableByMouse)
+        self.link_label.setContextMenuPolicy(Qt.NoContextMenu)
         self.copy_btn = PushButton("复制", self)
         self.copy_btn.clicked.connect(lambda: self.copyLink(link))
         self.vBoxLayout.addWidget(self.link_label)

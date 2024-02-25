@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from qfluentwidgets import (qconfig, QConfig, ConfigItem, OptionsConfigItem, BoolValidator,
-                            OptionsValidator, Theme, FolderValidator)
+                            OptionsValidator, Theme, FolderValidator, ColorConfigItem)
 
 
 def DownloadDir():
@@ -31,6 +31,7 @@ DAT_PATH = BASE_DIR / "dat"
 STYLE_FILE_PATH = BASE_DIR / "Resource" / "qss"
 ICON_PATH = BASE_DIR / "Resource" / "images"
 TEMP_PATH = BASE_DIR / "temp"
+LOGO = BASE_DIR / "Resource" / "logo.svg"
 
 # BASE_URL = "http://127.0.0.1"
 # BASE_URL = "http://110.40.174.23"
@@ -122,4 +123,3 @@ PAY_PAY = BASE_URL + "/pay/pay"
 PAY_SUCCESS = BASE_URL + "/pay/paysuccess"
 '''支付验证 URL 地址'''
 
-STYLE_TYPE = "home.qss"

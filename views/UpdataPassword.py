@@ -14,6 +14,7 @@ class UpdatePassword(QWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.setObjectName("updatePassword")
         self.dtimer = None
         self.dtime = None
         self.initWindow()
@@ -70,26 +71,26 @@ class UpdatePassword(QWidget):
 
     def get_capcha_clicked(self):
         if self.email_edit.text() == "":
-            warning(self.parent(), "邮箱不能为空")
+            warning(self, "邮箱不能为空")
             return
         req = requests.post(config.CAPTCHA_URL, data={"email": self.email_edit.text()})
         if req.status_code == 200:
-            success(self.parent(), "验证码已发送")
+            success(self, "验证码已发送")
             self.disabled_get_capcha()
         elif req.status_code == 400:
-            warning(self.parent(), req.json()['data'])
+            warning(self, req.json()['data'])
         else:
-            error(self.parent(), "未知错误")
+            error(self, "未知错误")
 
     def send_clicked(self):
         if (self.email_edit.text() == ""
                 or self.password_edit.text() == ""
                 or self.password_edit2.text() == ""
                 or self.captcha_edit.text() == ""):
-            warning(self.parent(), "请填写完整")
+            warning(self, "请填写完整")
             return
         if self.password_edit.text() != self.password_edit2.text():
-            warning(self.parent(), "两次密码不一致")
+            warning(self, "两次密码不一致")
             return
         password = hashlib.md5(self.password_edit.text().encode()).hexdigest()
         req = requests.post(config.UPDATE_PASSWORD_URL,
@@ -100,8 +101,8 @@ class UpdatePassword(QWidget):
                             )
         if req.status_code == 200:
             self.back.emit()
-            success(self.parent(), "修改成功")
+            success(self, "修改成功")
         elif req.status_code == 400:
-            warning(self.parent(), req.json()['data'])
+            warning(self, req.json()['data'])
         else:
-            error(self.parent(), "未知错误")
+            error(self, "未知错误")

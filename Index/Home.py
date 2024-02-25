@@ -1,13 +1,13 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
 
-from PyQt5.QtWidgets import QApplication, QHBoxLayout, QVBoxLayout, QSizePolicy, QLabel
+from PyQt5.QtWidgets import QApplication
 
 from qfluentwidgets import (MSFluentWindow, NavigationItemPosition, InfoBadge, InfoBadgePosition,
-                            NavigationAvatarWidget, RoundMenu, SearchLineEdit, FluentTitleBar, FluentStyleSheet)
-from qfluentwidgets import FluentIcon as FIF
-from qframelesswindow import StandardTitleBar, TitleBarBase, TitleBar
+                            NavigationAvatarWidget, RoundMenu)
+from qfluentwidgets import FluentIcon
 
+from Common import config
 from Common.DataSaver import dataSaver
 from Common.HomeTitleBar import HomeTitleBar
 from Common.StyleSheet import StyleSheet
@@ -37,21 +37,20 @@ class Home(MSFluentWindow):
         self.download_num = None
         self.upload_num = None
         self.fileInterface = FilePage(self)
-        self.ShareListInterface = ShareListPage("shareList",self)
+        self.ShareListInterface = ShareListPage("shareList", self)
         self.upLoadInterface = UploadPage("upLoad", self)
         self.downLoadInterface = DownloadPage("downLoad", self)
         self.payInterface = PayPage("pay", self)
         self.settingInterface = Setting(self)
         self.userInterface = NavigationAvatarWidget(
             dataSaver.get('user', 'name'),
-            FIF.ROBOT.path()
+            FluentIcon.ROBOT.path()
         )
 
         self.initWindow()
         self.initNavigation()
         self.setSlot()
         self.init_pipe()
-        StyleSheet.HOME.apply(self)
 
     def init_pipe(self):
         self.pipe = PipeMsg(self)
@@ -75,32 +74,32 @@ class Home(MSFluentWindow):
     def downloadFile(self, file: File):
         self.downLoadInterface.addTask(file.id)
 
-    def saveShare(self,msg):
+    def saveShare(self, msg):
         if self.save_share is not None:
             self.save_share.close()
             self.save_share = None
-        self.save_share=SaveShare(msg)
+        self.save_share = SaveShare(msg)
         self.save_share.show()
 
     def initNavigation(self):
-        self.addSubInterface(self.fileInterface, FIF.HOME, 'Home', FIF.HOME_FILL)
-        self.addSubInterface(self.ShareListInterface, FIF.SHARE, '分享列表', FIF.SHARE)
-        self.addSubInterface(self.upLoadInterface, FIF.SEND, '上传')
-        self.addSubInterface(self.downLoadInterface, FIF.DOWNLOAD, '下载')
-        self.addSubInterface(self.payInterface, FIF.SHOPPING_CART, '充值')
+        self.addSubInterface(self.fileInterface, FluentIcon.HOME, 'Home', FluentIcon.HOME_FILL)
+        self.addSubInterface(self.ShareListInterface, FluentIcon.SHARE, '分享列表', FluentIcon.SHARE)
+        self.addSubInterface(self.upLoadInterface, FluentIcon.SEND, '上传')
+        self.addSubInterface(self.downLoadInterface, FluentIcon.DOWNLOAD, '下载')
+        self.addSubInterface(self.payInterface, FluentIcon.SHOPPING_CART, '充值')
         self.navigationInterface.addWidget(
             routeKey='user',
             widget=self.userInterface,
             onClick=self.userInfo,
             position=NavigationItemPosition.BOTTOM
         )
-        self.addSubInterface(self.settingInterface, FIF.SETTING, '设置', position=NavigationItemPosition.BOTTOM)
+        self.addSubInterface(self.settingInterface, FluentIcon.SETTING, '设置', position=NavigationItemPosition.BOTTOM)
         self.navigationInterface.setCurrentItem(self.fileInterface.objectName())
 
     def setFilePreviewPage(self, file: File):
         if self.PreviewPage is None:
             self.PreviewPage = FilePreview(self)
-            self.addSubInterface(self.PreviewPage, FIF.VIEW, '文件预览')
+            self.addSubInterface(self.PreviewPage, FluentIcon.VIEW, '文件预览')
             self.PreviewPage.full.connect(self.full)
             self.PreviewPage.download.connect(self.downloadFile)
         self.PreviewPage.setFile(file)
@@ -146,9 +145,8 @@ class Home(MSFluentWindow):
         self.setTitleBar(self.newTitleBar)
         self.titleBar.setAttribute(Qt.WA_StyledBackground)
 
-        self.setWindowIcon(FIF.CLOUD.icon())
-        self.setWindowTitle("网盘")
-        # self.updateFrameless()
+        self.setWindowIcon(QIcon(str(config.LOGO)))
+        self.setWindowTitle("Cloud")
         self.setMicaEffectEnabled(True)
 
         desktop = QApplication.desktop().availableGeometry()

@@ -11,6 +11,7 @@ class File:
         self.time = data.get('upload_time')
         self.icon = data.get('icon')
         self.size = data.get('size')
+        self.fid = data.get('fid')
 
     def __str__(self):
         return (f"File: {self.name} "

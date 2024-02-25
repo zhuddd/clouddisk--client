@@ -1,25 +1,37 @@
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QCompleter
+from qfluentwidgets import PushButton, PasswordLineEdit, LineEdit
 from requests.utils import dict_from_cookiejar
 
 from Common.DataSaver import dataSaver
 from Common.StyleSheet import StyleSheet
 from Common.Tost import *
 from Common.config import LOGIN_URL
-from Ui.LoginUi import LoginUi
 import hashlib
 
 from Common.MyRequests import MyRequestThread
 
 
 
-class LoginPage(QtWidgets.QWidget, LoginUi):
+class LoginPage(QtWidgets.QWidget):
     signal = QtCore.pyqtSignal()
     forget = QtCore.pyqtSignal()
 
     def __init__(self, *args, **kwargs):
-        super(LoginPage, self).__init__(*args, **kwargs)
-        self.setupUi(self)
+        super().__init__(*args, **kwargs)
+        self.setObjectName("loginPage")
+        self.gridLayout = QtWidgets.QGridLayout(self)
+        self.pushbutton = PushButton("登录",self)
+        self.gridLayout.addWidget(self.pushbutton, 2, 1, 1, 1)
+        self.email = LineEdit(self)
+        self.email.setPlaceholderText("邮箱")
+        self.gridLayout.addWidget(self.email, 0, 0, 1, 2)
+        self.password = PasswordLineEdit(self)
+        self.password.setPlaceholderText("密码")
+        self.gridLayout.addWidget(self.password, 1, 0, 1, 2)
+        self.fogetPassword = PushButton("忘记密码", self)
+        self.gridLayout.addWidget(self.fogetPassword, 2, 0, 1, 1)
+
         StyleSheet.LOGIN.apply(self)
         self.time = None
         accounts = dataSaver.get("accounts", [])
@@ -39,7 +51,7 @@ class LoginPage(QtWidgets.QWidget, LoginUi):
             session = dict_from_cookiejar(cookie).get("session")
             if session is None or session == {}:
                 return
-            success(self.parent(), "正在登录")
+            success(self, "正在登录")
 
             def s():
                 if not self.request or not self.request.isRunning() and session:
@@ -64,7 +76,7 @@ class LoginPage(QtWidgets.QWidget, LoginUi):
         email = self.email.text()
         password = self.password.text()
         if email == "" or password == "":
-            error(self.parent(), "邮箱或密码为空")
+            error(self, "邮箱或密码为空")
             return
         password = hashlib.md5(password.encode()).hexdigest()
         if not self.request or not self.request.isRunning():
@@ -83,14 +95,14 @@ class LoginPage(QtWidgets.QWidget, LoginUi):
 
     def onError(self, s: dict):
         self.pushbutton.setDisabled(False)
-        error(self.parent(), s.get("message"))
+        error(self, s.get("message"))
 
     def responseData(self, response):
         try:
             self.pushbutton.setDisabled(False)
             response = response.json()
             if response["status"]:
-                success(self.parent(), "登录成功")
+                success(self, "登录成功")
                 email = response["data"]["email"]
                 dataSaver.update("accounts", email)
                 dataSaver.set("user", email)
@@ -98,9 +110,9 @@ class LoginPage(QtWidgets.QWidget, LoginUi):
                 self.signal.emit()
             else:
                 dataSaver.set("cookies", None)
-                error(self.parent(), response["data"]["error"])
+                error(self, response["data"]["error"])
         except Exception as e:
             print("responseData", response, e)
-            error(self.parent(), "网络异常")
+            error(self, "网络异常")
 
 

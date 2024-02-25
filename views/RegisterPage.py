@@ -1,20 +1,33 @@
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import pyqtSignal
+from qfluentwidgets import PasswordLineEdit, PushButton, LineEdit
 
 from Common.StyleSheet import StyleSheet
 from Common.Tost import warning, success, error
 from Common.config import REGISTER_URL
-from Ui.RegisterUi import RegisterUi
 import hashlib
 
 from Common.MyRequests import MyRequestThread
 
 
-class RegisterPage(QtWidgets.QWidget, RegisterUi):
+class RegisterPage(QtWidgets.QWidget):
     back = pyqtSignal()
     def __init__(self,*args,**kwargs):
-        super(RegisterPage, self).__init__(*args, **kwargs)
-        self.setupUi(self)
+        super().__init__(*args, **kwargs)
+        self.setObjectName("registerPage")
+        self.gridLayout = QtWidgets.QGridLayout(self)
+        self.email = LineEdit(self)
+        self.email.setPlaceholderText("邮箱")
+        self.gridLayout.addWidget(self.email, 0, 0, 1, 1)
+        self.password = PasswordLineEdit(self)
+        self.password.setPlaceholderText("密码")
+        self.gridLayout.addWidget(self.password, 1, 0, 1, 1)
+        self.password_2 = PasswordLineEdit(self)
+        self.password_2.setPlaceholderText("确认密码")
+        self.gridLayout.addWidget(self.password_2, 2, 0, 1, 1)
+        self.pushbutton = PushButton("注册",self)
+        self.gridLayout.addWidget(self.pushbutton, 3, 0, 1, 1)
+
         StyleSheet.LOGIN.apply(self)
         self.pushbutton.clicked.connect(self.signup)
         self.request = None
@@ -25,10 +38,10 @@ class RegisterPage(QtWidgets.QWidget, RegisterUi):
         password = self.password.text()
         password2 = self.password_2.text()
         if email == "":
-            warning(self.parent(), "邮箱为空")
+            warning(self, "邮箱为空")
             return
         if password != password2 or password == "":
-            warning(self.parent(), "密码不一致或为空")
+            warning(self, "密码不一致或为空")
             return
         password = hashlib.md5(password.encode()).hexdigest()
         if not self.request or not self.request.isRunning():
@@ -50,13 +63,13 @@ class RegisterPage(QtWidgets.QWidget, RegisterUi):
         data = s.json()
         if data["status"]:
             self.back.emit()
-            success(self.parent(), "注册成功")
+            success(self, "注册成功")
         else:
-            warning(self.parent(), data["data"]["error"])
+            warning(self, data["data"]["error"])
 
     def onError(self, s: dict):
         self.pushbutton.setDisabled(False)
-        error(self.parent(), s.get("message"))
+        error(self, s.get("message"))
 
 
 

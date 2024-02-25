@@ -46,6 +46,13 @@ class Setting(ScrollArea):
             ],
             parent=self.personalGroup
         )
+        self.themeColorCard = CustomColorSettingCard(
+            cfg.themeColor,
+            FIF.PALETTE,
+            self.tr('主题色'),
+            self.tr('更改应用程序的主题颜色'),
+            self.personalGroup
+        )
         self.zoomCard = OptionsSettingCard(
             cfg.dpiScale,
             FIF.ZOOM,
@@ -84,6 +91,7 @@ class Setting(ScrollArea):
         self.downloadGroup.addSettingCard(self.downloadFolderCard)
 
         self.personalGroup.addSettingCard(self.themeCard)
+        self.personalGroup.addSettingCard(self.themeColorCard)
         self.personalGroup.addSettingCard(self.zoomCard)
 
 
@@ -122,3 +130,4 @@ class Setting(ScrollArea):
 
         # personalization
         self.themeCard.optionChanged.connect(lambda ci: setTheme(cfg.get(ci),lazy=True))
+        self.themeColorCard.colorChanged.connect(setThemeColor)

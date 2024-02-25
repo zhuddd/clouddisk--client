@@ -5,8 +5,9 @@ import traceback
 import winreg
 from pathlib import Path
 
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QLocale
 from PyQt5.QtWidgets import QApplication
+from qfluentwidgets import FluentTranslator
 
 import Index
 from Common.config import cfg
@@ -60,9 +61,11 @@ else:
 
 QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps)
 
-# create application
+fluentTranslator = FluentTranslator(QLocale("zh_CN"))
+
 sys.excepthook = catch_exception
 app = QApplication(sys.argv)
+app.installTranslator(fluentTranslator)
 app.setAttribute(Qt.AA_DontCreateNativeWidgetSiblings)
 view = Index.Verify()
 view.show()

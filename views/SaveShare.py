@@ -9,6 +9,7 @@ from qfluentwidgets.components.widgets.frameless_window import FramelessWindow
 from Common import config, FileAction
 from Common.DataSaver import dataSaver
 from Common.FileAction import NewNameBox
+from Common.StyleSheet import StyleSheet
 from Common.Tost import error, success
 
 pattern = r"code=([^&]+)&pwd=([^/]*[^&]*)"
@@ -41,6 +42,7 @@ class SaveShare(FramelessWindow):
 
     def __init__(self, msg, parent=None):
         super().__init__(parent=parent)
+        StyleSheet.SHARE.apply(self)
         self.folderList = None  # type: list[FolderList]
         matches = re.findall(pattern, msg)
         if matches:

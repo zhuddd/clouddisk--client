@@ -1,10 +1,12 @@
 import requests
+from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QTableWidgetItem,  QWidget, QHeaderView, QVBoxLayout
 from qfluentwidgets import TableWidget,  Action
 from qfluentwidgets import FluentIcon as FIF
 
 from Common import config
 from Common.DataSaver import dataSaver
+from Common.Tost import success, error
 from Common.commandbarR import CommandBarR
 
 
@@ -45,34 +47,56 @@ class ShareListPage(QWidget):
         self.update_action.triggered.connect(self.updateList)
         self.menu.addAction(self.update_action)
 
+        self.copy_action = Action(FIF.COPY, self.tr('复制'))
+        self.copy_action.triggered.connect(self.copyLink)
+        self.menu.addAction(self.copy_action)
+
         self.del_action = Action(FIF.DELETE, self.tr('删除'))
         self.del_action.triggered.connect(self.delShare)
         self.menu.addAction(self.del_action)
 
-        self.menu.setSpaing(10)
-
     def updateList(self):
         req=requests.get(config.FILE_SHARE_LIST, cookies=dataSaver.get("cookies"))
         if req.status_code !=200:
+            error(self, "获取分享列表失败")
             return
         self.data=req.json()["data"]
         self.tableView.clearContents()
         self.tableView.setRowCount(len(self.data))
+        self.tableView.setSortingEnabled(False)
         for i, d in enumerate(self.data):
             for j in range(6):
-                self.tableView.setItem(i, j, QTableWidgetItem(d[j]))
+                item=QTableWidgetItem(d[j])
+                item.code=d[4]
+                self.tableView.setItem(i, j, item)
+        self.tableView.setSortingEnabled(True)
 
     def delShare(self):
         items=self.tableView.selectedItems()
         if not items:
             return
         item=items[0]
-        row=item.row()
         try:
-            share_code=self.data[row][4]
+            share_code=item.code
             req=requests.post(config.FILE_SHARE_DEL, cookies=dataSaver.get("cookies"), data={"code":share_code})
             if req.status_code==200:
                 self.updateList()
                 self.tableView.setCurrentItem(None)
+                success(self, "删除成功")
+            else:
+                error(self, req.json()["data"])
         except:
-            pass
+            error(self, "删除失败")
+
+    def copyLink(self):
+        items=self.tableView.selectedItems()
+        if not items:
+            return
+        item=items[0]
+        try:
+            share_code=item.code
+            link=f"{config.FILE_SHARE_GET}/{share_code}"
+            QtWidgets.QApplication.clipboard().setText(link)
+            success(self, "复制成功")
+        except:
+            error(self, "复制失败")

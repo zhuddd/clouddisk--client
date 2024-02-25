@@ -24,6 +24,7 @@ class IconCard(QFrame):
         self.Id = file.id
         self.face = file.face
         self.file = file
+        self.fid = file.fid
 
         self.iconWidget = IconWidget(self.icon, self)
         self.nameLabel = QLabel(self)
@@ -45,7 +46,7 @@ class IconCard(QFrame):
         self.timer.timeout.connect(self.checkClick)
 
         if self.face is None or self.face is True:
-            self.get_face = GetFace(self.Id)
+            self.get_face = GetFace(self.Id,self.fid)
             self.get_face.signal.connect(self.setIcon)
             self.get_face.start()
 

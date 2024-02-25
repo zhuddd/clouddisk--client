@@ -2,30 +2,45 @@ import os
 from uuid import uuid1
 
 from PyQt5 import QtWidgets, QtCore
-from qfluentwidgets import FlowLayout, RoundMenu, Action, MenuAnimationType
-from qfluentwidgets import FluentIcon as FIF
+from PyQt5.QtWidgets import QWidget
+from qfluentwidgets import FlowLayout, RoundMenu, Action, MenuAnimationType, ScrollArea, BreadcrumbBar, FluentIcon, \
+    DropDownPushButton
 
 from Common import FileAction
 from Common.FileAction import NewNameBox
 from Common.StyleSheet import StyleSheet
 from Common.Tost import error
-from Ui.FilePageUi import FilePageUi
 from Common.GetDir import GetDir
 from components.IconCard import IconCard
 from Common.File import File
 from views.SharePage import SharePage
 
 
-class FilePage(QtWidgets.QWidget, FilePageUi):
+class FilePage(QtWidgets.QWidget):
     filePath = QtCore.pyqtSignal(tuple)
     preview = QtCore.pyqtSignal(File)
     fileDownload = QtCore.pyqtSignal(File)
 
     def __init__(self, *args, **kwargs):
-        super(FilePage, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.verticalLayout = QtWidgets.QVBoxLayout(self)
+        self.tool_box=QWidget(self)
+        self.horizontalLayout = QtWidgets.QHBoxLayout(self.tool_box)
+        self.tool_box.setLayout(self.horizontalLayout)
+        self.dir = BreadcrumbBar(self)
+        self.horizontalLayout.addWidget(self.dir,1)
+        self.menu_button = DropDownPushButton(FluentIcon.DOWN, '类型降序', self)
+        self.horizontalLayout.addWidget(self.menu_button,0)
+        self.verticalLayout.addWidget(self.tool_box)
+        self.ScrollArea = ScrollArea(self)
+        self.ScrollArea.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.ScrollArea.setWidgetResizable(True)
+        self.box = QtWidgets.QWidget()
+        self.ScrollArea.setWidget(self.box)
+        self.verticalLayout.addWidget(self.ScrollArea)
+
         self.sharePage = None
         self.disposable_key = False
-        self.setupUi(self)
         self.setObjectName("FilePage")
         self.setAcceptDrops(True)
 
@@ -40,11 +55,14 @@ class FilePage(QtWidgets.QWidget, FilePageUi):
         self.addInterface("Home", 0)
         self.dir.currentItemChanged.connect(self.updatePage)
 
-        self.getDir = GetDir(self.errFunc, self.setIconCard)
+        self.getDir = GetDir()
+        self.getDir.update.connect(self.setIconCard)
+        self.getDir.err.connect(self.errFunc)
         self.getDir.get_dir(0)
 
         self.tmp = None  # type:File
         self.wait = None  # type:tuple[File,str]
+        self.sort=0
 
         self.update_action = None
         self.download_action = None
@@ -55,30 +73,30 @@ class FilePage(QtWidgets.QWidget, FilePageUi):
         self.rename_action = None
         self.new_folder_action = None
         self.preview_action = None
-        self.share_action=None
+        self.share_action = None
         self.initAction()
-
+        self.initSortMenu()
 
     def initAction(self):
-        self.update_action = Action(FIF.SYNC, '刷新')
+        self.update_action = Action(FluentIcon.SYNC, '刷新')
         self.update_action.triggered.connect(self.updatePage)
-        self.download_action = Action(FIF.DOWNLOAD, '下载')
+        self.download_action = Action(FluentIcon.DOWNLOAD, '下载')
         self.download_action.triggered.connect(self.downloadAction)
-        self.cut_action = Action(FIF.CUT, '剪切')
+        self.cut_action = Action(FluentIcon.CUT, '剪切')
         self.cut_action.triggered.connect(self.cutAction)
-        self.copy_action = Action(FIF.COPY, '复制')
+        self.copy_action = Action(FluentIcon.COPY, '复制')
         self.copy_action.triggered.connect(self.copyAction)
-        self.paste_action = Action(FIF.PASTE, '粘贴')
+        self.paste_action = Action(FluentIcon.PASTE, '粘贴')
         self.paste_action.triggered.connect(self.pasteAction)
-        self.delete_action = Action(FIF.DELETE, '删除')
+        self.delete_action = Action(FluentIcon.DELETE, '删除')
         self.delete_action.triggered.connect(self.deleteAction)
-        self.rename_action = Action(FIF.EDIT, '重命名')
+        self.rename_action = Action(FluentIcon.EDIT, '重命名')
         self.rename_action.triggered.connect(self.renameAction)
-        self.new_folder_action = Action(FIF.FOLDER_ADD, '新建文件夹')
+        self.new_folder_action = Action(FluentIcon.FOLDER_ADD, '新建文件夹')
         self.new_folder_action.triggered.connect(self.newfolderAction)
-        self.preview_action = Action(FIF.VIEW, '预览')
+        self.preview_action = Action(FluentIcon.VIEW, '预览')
         self.preview_action.triggered.connect(self.viewAction)
-        self.share_action = Action(FIF.SHARE, '分享')
+        self.share_action = Action(FluentIcon.SHARE, '分享')
         self.share_action.triggered.connect(self.shareAction)
 
     def downloadAction(self):
@@ -158,14 +176,42 @@ class FilePage(QtWidgets.QWidget, FilePageUi):
         self.tmp = None
 
     def shareAction(self):
-        file=self.tmp
-        self.sharePage=SharePage(file)
+        file = self.tmp
+        self.sharePage = SharePage(file)
         self.tmp = None
         self.sharePage.show()
 
+    def initSortMenu(self):
+        name= Action(FluentIcon.UP, '名称升序')
+        name.triggered.connect(lambda: self.sortChange(1))
+        name_down= Action(FluentIcon.DOWN, '名称降序')
+        name_down.triggered.connect(lambda: self.sortChange(2))
+        type= Action(FluentIcon.UP, '类型升序')
+        type.triggered.connect(lambda: self.sortChange(3))
+        type_down= Action(FluentIcon.DOWN, '类型降序')
+        type_down.triggered.connect(lambda: self.sortChange(4))
+        time= Action(FluentIcon.UP, '时间升序')
+        time.triggered.connect(lambda: self.sortChange(5))
+        time_down= Action(FluentIcon.DOWN, '时间降序')
+        time_down.triggered.connect(lambda: self.sortChange(6))
+        self.menu = RoundMenu(parent=self)
+        self.menu.addAction(name)
+        self.menu.addAction(name_down)
+        self.menu.addAction(type)
+        self.menu.addAction(type_down)
+        self.menu.addAction(time)
+        self.menu.addAction(time_down)
+        self.menu_button.setMenu(self.menu)
+
+    def sortChange(self,sort):
+        self.sort=sort
+        self.menu_button.setText(self.menu.actions()[sort-1].text())
+        self.menu_button.setIcon(self.menu.actions()[sort-1].icon())
+        self.updatePage()
+
     def dragEnterEvent(self, event):
         key = self.dir.currentItem().routeKey
-        if isinstance(self.page_data[key],str):
+        if isinstance(self.page_data[key], str):
             return
         if event.mimeData().hasUrls():
             event.accept()
@@ -201,7 +247,7 @@ class FilePage(QtWidgets.QWidget, FilePageUi):
         if key is None or key not in self.page_data.keys() or key is False:
             key = self.dir.currentItem().routeKey
         self.layout.takeAllWidgets()
-        self.getDir.get_dir(self.page_data[key],isinstance(self.page_data[key],str))
+        self.getDir.get_dir(self.page_data[key], isinstance(self.page_data[key], str),self.sort)
 
     def errFunc(self, err):
         error(self, err)

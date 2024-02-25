@@ -1,72 +1,77 @@
 from typing import Union
 
+import requests
 from PyQt5.QtCore import QThread, pyqtSignal
-from requests import Response
 
+from Common.DataSaver import dataSaver
 from Common.MyIcon import MyIcon
 from Common.File import File
-from Common.MyRequests import MyRequestThread
 from Common.config import FILE_DIR
 
 
-class SetIcon(QThread):
-    signal = pyqtSignal(File)
-
-    def __init__(self, data):
-        super(SetIcon, self).__init__()
-        self.data = data
-
-    def run(self):
-        """
-        在发出信号之前遍历数据并修复与图标相关的信息。
-        """
-        try:
-            # TODO:文件类型排序
-            for i in self.data:
-                f = File(i)
-                f.icon = MyIcon(i["file_type"])
-                self.signal.emit(f)
-        except Exception as e:
-            print(e)
 
 
-class GetDir:
-    def __init__(self, errFunc, updateFunc):
+
+class GetDir(QThread):
+    update=pyqtSignal(File)
+    err=pyqtSignal(str)
+    def __init__(self):
+        super(GetDir, self).__init__()
+        self.sortBy = 0
+        self.msg = None
+        self.find_type = None
         self.request = None
         self.path = FILE_DIR
         self.set_icon = None
-        self.errFunc = errFunc
-        self.updateFunc = updateFunc
 
-    def get_dir(self, msg: Union[str, int], find_type=False):
+    def get_dir(self, msg: Union[str, int], find_type=False,sortBy=0):
         '''
         获取文件列表
         :param msg: 文件夹id或者文件名(查找模式)
         :param find_type:  查找模式
+        :param sortBy: 排序方式 0:默认 1:名称升序 2:名称降序 3:类型升序 4:类型降序 5:时间升序 6:时间降序
         :return:
         '''
-        try:
-            if self.request is None or not self.request.isRunning():
-                self.request = MyRequestThread()
-                self.request.get(f"{self.path}/{1 if find_type else 0}/{msg}")
-                self.request.response.connect(self.update_page_data)
-                self.request.error.connect(self.errFunc)
-                self.request.start()
-        except Exception as e:
-            print(e)
+        self.msg = msg
+        self.find_type = find_type
+        self.sortBy = sortBy
+        self.start()
 
-    def update_page_data(self, data: Response):
-        """
-        使用检索到的信息更新页面数据。
-        """
-        if data.status_code != 200:
-            self.errFunc("Network Error")
+    def run(self):
+        req=requests.get(f"{self.path}/{1 if self.find_type else 0}/{self.msg}",cookies=dataSaver.get("cookies"))
+        if req.status_code != 200:
+            self.err.emit("网络错误")
             return None
-        data = data.json()
+        data = req.json()
         if not data["status"]:
-            self.errFunc(data["data"])
+            self.err.emit(data["data"])
             return None
-        if self.set_icon is None or not self.set_icon.isRunning():
-            self.set_icon = SetIcon(data["data"])
-            self.set_icon.signal.connect(self.updateFunc)
-            self.set_icon.start()
+        file_list = [File(i) for i in data["data"]]
+
+        if self.sortBy == 1:
+            # 按名称升序排列
+            file_list.sort(key=lambda x: x.name)
+        elif self.sortBy == 2:
+            # 按名称降序排列
+            file_list.sort(key=lambda x: x.name, reverse=True)
+        elif self.sortBy == 3:
+            # 按类型升序排列
+            file_list.sort(key=lambda x: x.type)
+        elif self.sortBy == 4:
+            # 按类型降序排列
+            file_list.sort(key=lambda x: x.type, reverse=True)
+        elif self.sortBy == 5:
+            # 按时间升序排列
+            file_list.sort(key=lambda x: x.time)
+        elif self.sortBy == 6:
+            # 按时间降序排列
+            file_list.sort(key=lambda x: x.time, reverse=True)
+        else:
+            # 按类型降序排列
+            file_list.sort(key=lambda x: x.type, reverse=True)
+
+        # Emit the sorted files
+        for f in file_list:
+            f.icon = MyIcon(f.type)
+            self.update.emit(f)
+

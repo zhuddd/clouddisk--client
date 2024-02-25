@@ -1,8 +1,28 @@
-QWidget {
-    background-color: rgb(21,28,34);
+Verify, SplitTitleBar {
+    background-color: transparent;
+}
+
+Verify[isTransparent=true] {
+    background-color: transparent;
     border: none;
+}
+
+Verify>QLabel#titleLabel,
+Verify>QLabel#titleLabel {
+    background: transparent;
+    font: 13px 'Segoe UI', 'Microsoft YaHei', 'PingFang SC';
+    padding: 0 4px;
     color: white;
 }
+
+Verify>QLabel#titleLabel {
+    padding: 0 10px
+}
+
+Verify>QLabel#titleLabel {
+    padding: 0 5px
+}
+
 MinimizeButton {
     qproperty-normalColor: white;
     qproperty-normalBackgroundColor: transparent;
@@ -27,6 +47,19 @@ CloseButton {
     qproperty-normalBackgroundColor: transparent;
 }
 
-StandardTitleBar > QLabel {
-    color: white;
+Verify {
+    border: 1px solid rgba(0, 0, 0, 0.18);
+    border-right: none;
+    border-bottom: none;
+    border-top-left-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.0314);
+}
+
+Verify > StackedWidget {
+    border-top-left-radius: 0px;
+    border-top: none;
+}
+
+Verify {
+    background-color: transparent;
 }
