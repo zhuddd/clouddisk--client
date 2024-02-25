@@ -7,7 +7,7 @@ import requests
 from requests import Response
 from requests_toolbelt import MultipartEncoder, MultipartEncoderMonitor
 
-from Common.DataSaver import DataSaver
+from Common.DataSaver import dataSaver
 from Common.MyFile import *
 
 
@@ -22,10 +22,10 @@ class MyRequestThread(requests.Session, QThread):
         self.url = None
         self.request_args = None
         try:
-            if DataSaver.get("cookies") is not None:
-                self.cookies = DataSaver.get("cookies")
+            if dataSaver.get("cookies") is not None:
+                self.cookies = dataSaver.get("cookies")
             else:
-                DataSaver.set("cookies", self.cookies)
+                dataSaver.set("cookies", self.cookies)
         except Exception as e:
             print("MyRequestThread init", e)
             self.error.emit({"message": "初始化失败"})
@@ -41,7 +41,7 @@ class MyRequestThread(requests.Session, QThread):
                 raise Exception("No request data set")
             args, kwargs = self.request_args
             response = super(MyRequestThread, self).request(self.method, self.url, *args, **kwargs)
-            DataSaver.update("cookie", response.cookies)
+            dataSaver.update("cookie", response.cookies)
             self.response.emit(response)
             response.close()
         except requests.exceptions.RequestException as e:
@@ -171,7 +171,7 @@ class ResumableUploader(QThread):
                         self.url,
                         data=monitor,
                         headers=headers,
-                        cookies=DataSaver.get("cookies")
+                        cookies=dataSaver.get("cookies")
                     )
                     if r.status_code == 200:
                         self.uploaded_bytes += len(file_data)
@@ -316,7 +316,7 @@ class ResumableDownloader(QThread):
         with  requests.get(self.url,
                            params={"file_id": self.f_id, "Only_header": self.first},
                            stream=not self.first,
-                           cookies=DataSaver.get("cookies"),
+                           cookies=dataSaver.get("cookies"),
                            headers={"Range": f"bytes={self.started_byte}-"},
                            ) as res:
             if res.status_code in (200,206):

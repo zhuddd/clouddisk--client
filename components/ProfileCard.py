@@ -3,7 +3,7 @@ from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QWidget
 from qfluentwidgets import AvatarWidget, HyperlinkButton, BodyLabel, setFont, isDarkTheme, PushButton, ProgressBar
 
-from Common.DataSaver import DataSaver
+from Common.DataSaver import dataSaver
 from Common.MyFile import convert_size
 from Common.UserInfo import getStorageSpace
 
@@ -14,7 +14,7 @@ class ProfileCard(QWidget):
     def __init__(self,   parent=None):
         super().__init__(parent=parent)
         avatarPath = 'resource/shoko.png'
-        name = DataSaver.get('user', 'name')
+        name = dataSaver.get('user', 'name')
         # name = "01234567890123456789"
         name_show= name if len(name)<12 else name[:12]+"..."
         self.avatar = AvatarWidget(avatarPath, self)

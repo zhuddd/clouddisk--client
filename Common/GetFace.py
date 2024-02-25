@@ -2,7 +2,7 @@ import requests
 from PyQt5 import QtCore
 from PyQt5.QtCore import QThread
 
-from Common.DataSaver import DataSaver
+from Common.DataSaver import dataSaver
 from Common.config import FILE_FACE
 
 
@@ -41,7 +41,7 @@ class GetFace(QThread):
                 return
             self.req = requests.get(
                 FILE_FACE + "/" + str(self.face_id) + "/icon",
-                cookies=DataSaver.get("cookies", None),
+                cookies=dataSaver.get("cookies", None),
             )
             self.success(self.req)
         except Exception as e:

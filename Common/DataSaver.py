@@ -1,63 +1,49 @@
-import os
-
 from requests.cookies import RequestsCookieJar
 
-import atexit
 import pickle
 
 from Common.config import DAT_PATH
 
 
 class DataSaver:
-    _instance = None
-
-    def __new__(cls, *args, **kwargs):
-        if cls._instance is None:
-            try:
-                with open(DAT_PATH, 'rb') as file:
-                    loaded_data = pickle.load(file)
-            except:
-                loaded_data = None
-            cls._instance = super().__new__(cls)
-            if loaded_data is None:
-                cls._instance.data = {
-                    "accounts": [],
-                }
-            else:
-                cls._instance.data = loaded_data
-        return cls._instance
-
     def __init__(self):
-        atexit.register(self.save)
+        try:
+            with open(DAT_PATH, 'rb') as file:
+                loaded_data = pickle.load(file)
+        except:
+            loaded_data = None
+        if loaded_data is None:
+            self.data = {
+                "accounts": [],
+            }
+        else:
+            self.data = loaded_data
 
     def save(self):
         with open(DAT_PATH, 'wb') as file:
             pickle.dump(self.data, file)
 
-    @staticmethod
-    def get(key, default=None):
-        return DataSaver().data.get(key, default)
+    def get(self, key, default=None):
+        return self.data.get(key, default)
 
-    @staticmethod
-    def set(key, value):
-        DataSaver().data[key] = value
+    def set(self, key, value):
+        self.data[key] = value
+        self.save()
 
-    @staticmethod
-    def update(key, value):
-        if isinstance(DataSaver().data.get(key, ), dict):
-            DataSaver().data[key].update(value)
-        elif isinstance(DataSaver().data.get(key, ), list):
-            if value not in DataSaver().data[key]:
-                DataSaver().data[key].append(value)
-        elif isinstance(DataSaver().data.get(key, ), RequestsCookieJar):
-            DataSaver().data[key].update(value)
+    def update(self, key, value):
+        if isinstance(self.data.get(key, ), dict):
+            self.data[key].update(value)
+        elif isinstance(self.data.get(key, ), list):
+            if value not in self.data[key]:
+                self.data[key].append(value)
+        elif isinstance(self.data.get(key, ), RequestsCookieJar):
+            self.data[key].update(value)
         else:
-            DataSaver().data[key] = value
+            self.data[key] = value
 
-    @staticmethod
-    def getDownloadDir():
-        if DataSaver().data.get("download_dir", None) is not None:
-            download_dir = DataSaver().data.get("download_dir", None)
+    def getDownloadDir(self):
+        if self.data.get("download_dir", None) is not None:
+            download_dir = self.data.get("download_dir", None)
         else:
             import winreg
             # 打开Windows注册表
@@ -67,3 +53,4 @@ class DataSaver:
         return download_dir
 
 
+dataSaver = DataSaver()

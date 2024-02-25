@@ -2,7 +2,7 @@ from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QCompleter
 from requests.utils import dict_from_cookiejar
 
-from Common.DataSaver import DataSaver
+from Common.DataSaver import dataSaver
 from Common.StyleSheet import StyleSheet
 from Common.Tost import *
 from Common.config import LOGIN_URL
@@ -22,7 +22,7 @@ class LoginPage(QtWidgets.QWidget, LoginUi):
         self.setupUi(self)
         StyleSheet.LOGIN.apply(self)
         self.time = None
-        accounts = DataSaver.get("accounts", [])
+        accounts = dataSaver.get("accounts", [])
         self.completer = QCompleter(accounts, self.email)
         self.completer.setCaseSensitivity(Qt.CaseInsensitive)
         self.completer.setMaxVisibleItems(10)
@@ -35,7 +35,7 @@ class LoginPage(QtWidgets.QWidget, LoginUi):
 
     def loginBySession(self):
         try:
-            cookie = DataSaver.get("cookies")
+            cookie = dataSaver.get("cookies")
             session = dict_from_cookiejar(cookie).get("session")
             if session is None or session == {}:
                 return
@@ -92,12 +92,12 @@ class LoginPage(QtWidgets.QWidget, LoginUi):
             if response["status"]:
                 success(self.parent(), "登录成功")
                 email = response["data"]["email"]
-                DataSaver.update("accounts", email)
-                DataSaver.set("user", email)
+                dataSaver.update("accounts", email)
+                dataSaver.set("user", email)
 
                 self.signal.emit()
             else:
-                DataSaver.set("cookies", None)
+                dataSaver.set("cookies", None)
                 error(self.parent(), response["data"]["error"])
         except Exception as e:
             print("responseData", response, e)

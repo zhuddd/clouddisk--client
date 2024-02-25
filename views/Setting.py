@@ -121,4 +121,4 @@ class Setting(ScrollArea):
             self.__onDownloadFolderCardClicked)
 
         # personalization
-        self.themeCard.optionChanged.connect(lambda ci: setTheme(cfg.get(ci)))
+        self.themeCard.optionChanged.connect(lambda ci: setTheme(cfg.get(ci),lazy=True))

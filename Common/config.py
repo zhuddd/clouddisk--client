@@ -104,6 +104,12 @@ FILE_SHARE_GET = BASE_URL + "/share/get"
 FILE_SHARE_SAVE = BASE_URL + "/share/save"
 '''保存分享文件 URL 地址'''
 
+FILE_SHARE_LIST = BASE_URL + "/share/list"
+'''分享文件列表 URL 地址'''
+
+FILE_SHARE_DEL = BASE_URL + "/share/delete"
+'''删除分享文件 URL 地址'''
+
 PAY_MENU = BASE_URL + "/pay/menu"
 '''订阅列表 URL 地址'''
 

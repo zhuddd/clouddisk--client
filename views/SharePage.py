@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import QWidget, QHBoxLayout, QGridLayout, QVBoxLayout, QLab
 from qfluentwidgets import ZhDatePicker, ScrollArea, RadioButton, LineEdit, PushButton
 
 from Common import config
-from Common.DataSaver import DataSaver
+from Common.DataSaver import dataSaver
 from Common.File import File
 from Common.Tost import error, success
 from components.IconCard import IconCard
@@ -111,7 +111,7 @@ class SharePage(ScrollArea):
                 "end_time": end_time,
                 "pwd": pwd
             },
-            cookies=DataSaver.get('cookie')
+            cookies=dataSaver.get('cookie')
         )
         if req.status_code != 200:
             error(self, "分享失败")

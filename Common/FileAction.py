@@ -2,35 +2,35 @@ import requests
 from PyQt5.QtCore import QUrl
 from qfluentwidgets import MessageBoxBase, SubtitleLabel, LineEdit
 
-from Common.DataSaver import DataSaver
+from Common.DataSaver import dataSaver
 from Common.config import FILE_PASTE, FILE_DELETE, FILE_RENAME, FILE_NEWFOLDER
 
 
 def paste(fileId, parentId) -> requests.Response:
     path = FILE_PASTE
     params = {"id": fileId, "parent": parentId}
-    r = requests.post(path, data=params, cookies=DataSaver.get("cookies"))
+    r = requests.post(path, data=params, cookies=dataSaver.get("cookies"))
     return r
 
 
 def delete(fileId) -> requests.Response:
     path = FILE_DELETE
     params = {"id": fileId}
-    r = requests.post(path, data=params, cookies=DataSaver.get("cookies"))
+    r = requests.post(path, data=params, cookies=dataSaver.get("cookies"))
     return r
 
 
 def rename(fileId, newName) -> requests.Response:
     path=FILE_RENAME
     params = {"id": fileId, "name": newName}
-    r = requests.post(path, data=params, cookies=DataSaver.get("cookies"))
+    r = requests.post(path, data=params, cookies=dataSaver.get("cookies"))
     return r
 
 
 def newfolder(parentId, name) -> requests.Response:
     path=FILE_NEWFOLDER
     params = {"parent": parentId, "name": name}
-    r = requests.post(path, data=params, cookies=DataSaver.get("cookies"))
+    r = requests.post(path, data=params, cookies=dataSaver.get("cookies"))
     return r
 
 class NewNameBox(MessageBoxBase):

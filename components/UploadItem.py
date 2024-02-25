@@ -4,7 +4,7 @@ from PyQt5 import QtWidgets
 from PyQt5.QtCore import pyqtSignal
 from qfluentwidgets import FluentIcon
 
-from Common.DataSaver import DataSaver
+from Common.DataSaver import dataSaver
 from Common.MyFile import CheckFile, convert_size
 from Common.config import FILE_UPLOAD_CHECK, FILE_UPLOAD
 from Ui.UpDownItem import UpDownItem
@@ -200,7 +200,7 @@ class UploadItem(QtWidgets.QWidget, UpDownItem):
             self.on_error("文件检查失败")
 
     def init_upload_request(self, start_byte=0):
-        auto_size = DataSaver.get("auto_size", True)
+        auto_size = dataSaver.get("auto_size", True)
         self.request = ResumableUploader(
             url=FILE_UPLOAD,
             filepath=self.path,

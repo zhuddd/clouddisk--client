@@ -8,7 +8,7 @@ from qfluentwidgets import (MSFluentWindow, NavigationItemPosition, InfoBadge, I
 from qfluentwidgets import FluentIcon as FIF
 from qframelesswindow import StandardTitleBar, TitleBarBase, TitleBar
 
-from Common.DataSaver import DataSaver
+from Common.DataSaver import dataSaver
 from Common.HomeTitleBar import HomeTitleBar
 from Common.StyleSheet import StyleSheet
 from Common.pipe_msg import PipeMsg
@@ -21,6 +21,7 @@ from views.FilePage import FilePage
 from views.PayPage import PayPage
 from views.SaveShare import SaveShare
 from views.Setting import Setting
+from views.ShareListPage import ShareListPage
 from views.UploadPage import UploadPage
 
 
@@ -36,12 +37,13 @@ class Home(MSFluentWindow):
         self.download_num = None
         self.upload_num = None
         self.fileInterface = FilePage(self)
+        self.ShareListInterface = ShareListPage("shareList",self)
         self.upLoadInterface = UploadPage("upLoad", self)
         self.downLoadInterface = DownloadPage("downLoad", self)
         self.payInterface = PayPage("pay", self)
         self.settingInterface = Setting(self)
         self.userInterface = NavigationAvatarWidget(
-            DataSaver.get('user', 'name'),
+            dataSaver.get('user', 'name'),
             FIF.ROBOT.path()
         )
 
@@ -82,6 +84,7 @@ class Home(MSFluentWindow):
 
     def initNavigation(self):
         self.addSubInterface(self.fileInterface, FIF.HOME, 'Home', FIF.HOME_FILL)
+        self.addSubInterface(self.ShareListInterface, FIF.SHARE, '分享列表', FIF.SHARE)
         self.addSubInterface(self.upLoadInterface, FIF.SEND, '上传')
         self.addSubInterface(self.downLoadInterface, FIF.DOWNLOAD, '下载')
         self.addSubInterface(self.payInterface, FIF.SHOPPING_CART, '充值')
@@ -161,7 +164,7 @@ class Home(MSFluentWindow):
 
     def logout(self):
         from Index import Verify
-        DataSaver.set("cookies", None)
+        dataSaver.set("cookies", None)
         self.verify = Verify()
         self.verify.show()
         self.close()

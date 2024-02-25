@@ -5,7 +5,7 @@ from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import QTimer
 from qfluentwidgets import FluentIcon as FIF
 
-from Common.DataSaver import DataSaver
+from Common.DataSaver import dataSaver
 from Common.MyFile import *
 from Common.StyleSheet import StyleSheet
 from Common.Tost import error
@@ -30,7 +30,7 @@ class UploadPage(QtWidgets.QWidget, UpDown):
         self.controller.update.connect(lambda: self.update.emit())
         self.controller.taskNum.connect(self.taskNum.emit)
 
-        self.max_thread.setValue(DataSaver.get("upload_max_thread", 5))
+        self.max_thread.setValue(dataSaver.get("upload_max_thread", 5))
         self.toolBox.addItem(routeKey="Play", onClick=self.controkkerRun, icon=FIF.PLAY_SOLID)
         self.toolBox.addItem(routeKey="Stop", onClick=self.controllerStop, icon=FIF.PAUSE_BOLD)
 
@@ -70,12 +70,12 @@ class UploadPage(QtWidgets.QWidget, UpDown):
         self.save_history()
 
     def save_history(self):
-        DataSaver.set(f"upload_task_wait{DataSaver.get('user')}", self.task_wait)
-        DataSaver.set(f"upload_task_success{DataSaver.get('user')}", self.task_success)
+        dataSaver.set(f"upload_task_wait{dataSaver.get('user')}", self.task_wait)
+        dataSaver.set(f"upload_task_success{dataSaver.get('user')}", self.task_success)
 
     def get_history(self):
-        task_wait = DataSaver.get(f"upload_task_wait{DataSaver.get('user')}", [])
-        task_success = DataSaver.get(f"upload_task_success{DataSaver.get('user')}", [])
+        task_wait = dataSaver.get(f"upload_task_wait{dataSaver.get('user')}", [])
+        task_success = dataSaver.get(f"upload_task_success{dataSaver.get('user')}", [])
         for i in task_wait:
             self.create_upload_item(i)
         for i in task_success:
@@ -123,7 +123,7 @@ class UpLoad(QThread):
 
     def setMax(self, num: int):
         self._max = num
-        DataSaver.set("upload_max_thread", num)
+        dataSaver.set("upload_max_thread", num)
 
     def setRun(self, run: bool):
         self._run = run
@@ -144,7 +144,7 @@ class UpLoad(QThread):
         try:
             new_list = requests.post(FILE_UPLOAD_DIR,
                                      data={"p": p, "tree": json.dumps(tree)},
-                                     cookies=DataSaver.get("cookie")
+                                     cookies=dataSaver.get("cookie")
                                      ).json()
             if new_list["status"]:
                 id_kv = new_list["data"]

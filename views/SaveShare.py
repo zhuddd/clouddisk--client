@@ -7,7 +7,7 @@ from qfluentwidgets import TreeWidget, PushButton
 from qfluentwidgets.components.widgets.frameless_window import FramelessWindow
 
 from Common import config, FileAction
-from Common.DataSaver import DataSaver
+from Common.DataSaver import dataSaver
 from Common.FileAction import NewNameBox
 from Common.Tost import error, success
 
@@ -43,7 +43,6 @@ class SaveShare(FramelessWindow):
         super().__init__(parent=parent)
         self.folderList = None  # type: list[FolderList]
         matches = re.findall(pattern, msg)
-        print(matches,msg)
         if matches:
             self.code, self.pwd = matches[0]
             self.pwd=self.pwd.replace("/","")
@@ -74,7 +73,7 @@ class SaveShare(FramelessWindow):
         self.newfolder_btn.clicked.connect(self.newFolder)
 
     def getFolderList(self):
-        req = requests.get(config.FILE_FOLDER_LIST, cookies=DataSaver.get("cookies"))
+        req = requests.get(config.FILE_FOLDER_LIST, cookies=dataSaver.get("cookies"))
         if req.status_code == 200:
             data = req.json()
             d = data["data"]
@@ -111,7 +110,7 @@ class SaveShare(FramelessWindow):
         self.save_btn.setDisabled(True)
         self.repaint()
         item = item[0]
-        req = requests.post(config.FILE_SHARE_SAVE, cookies=DataSaver.get("cookies"),
+        req = requests.post(config.FILE_SHARE_SAVE, cookies=dataSaver.get("cookies"),
                             data={"code": self.code, "pwd": self.pwd, "parent": item.id})
         if req.status_code != 200:
             try:

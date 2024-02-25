@@ -6,7 +6,7 @@ from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import QTimer, QThread
 from qfluentwidgets import FluentIcon as FIF
 
-from Common.DataSaver import DataSaver
+from Common.DataSaver import dataSaver
 from Common.StyleSheet import StyleSheet
 from Common.Tost import error
 from Common.config import cfg, FILE_DOWNLOAD_TREE
@@ -28,7 +28,7 @@ class DownloadPage(QtWidgets.QWidget, UpDown):
         self.controller.creatItem.connect(self.create_download_item)
         self.controller.taskNum.connect(self.taskNum.emit)
 
-        self.max_thread.setValue(DataSaver.get("download_max_thread", 5))
+        self.max_thread.setValue(dataSaver.get("download_max_thread", 5))
         self.toolBox.addItem(routeKey="Play", onClick=self.controkkerRun, icon=FIF.PLAY_SOLID)
         self.toolBox.addItem(routeKey="Stop", onClick=self.controllerStop, icon=FIF.PAUSE_BOLD)
 
@@ -68,12 +68,12 @@ class DownloadPage(QtWidgets.QWidget, UpDown):
         self.save_history()
 
     def save_history(self):
-        DataSaver.set(f"download_task_wait{DataSaver.get('user')}", self.task_wait)
-        DataSaver.set(f"download_task_success{DataSaver.get('user')}", self.task_success)
+        dataSaver.set(f"download_task_wait{dataSaver.get('user')}", self.task_wait)
+        dataSaver.set(f"download_task_success{dataSaver.get('user')}", self.task_success)
 
     def get_history(self):
-        task_wait = DataSaver.get(f"download_task_wait{DataSaver.get('user')}", [])
-        task_success = DataSaver.get(f"download_task_success{DataSaver.get('user')}", [])
+        task_wait = dataSaver.get(f"download_task_wait{dataSaver.get('user')}", [])
+        task_success = dataSaver.get(f"download_task_success{dataSaver.get('user')}", [])
         for i in task_wait:
             self.create_download_item(i)
         for i in task_success:
@@ -120,7 +120,7 @@ class DownLoad(QThread):
 
     def setMax(self, num: int):
         self._max = num
-        DataSaver.set("download_max_thread", num)
+        dataSaver.set("download_max_thread", num)
 
     def setRun(self, run: bool):
         self._run = run
@@ -138,7 +138,7 @@ class DownLoad(QThread):
             url = FILE_DOWNLOAD_TREE
             req = requests.post(url,
                                  data={"file_id": f_id},
-                                 cookies=DataSaver.get("cookie")
+                                 cookies=dataSaver.get("cookie")
                                  )
             new_list=req.json()
             if new_list["status"]:

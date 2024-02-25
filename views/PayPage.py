@@ -9,14 +9,14 @@ from qfluentwidgets import FlowLayout, PushButton, ScrollArea, TextEdit, Action,
     RoundMenu, Theme
 from qframelesswindow.webengine import FramelessWebEngineView
 
-from Common.DataSaver import DataSaver
+from Common.DataSaver import dataSaver
 from Common.StyleSheet import StyleSheet
 from Common.Tost import success, error
 from Common.config import PAY_MENU, PAY_INFO, PAY_PAY, PAY_SUCCESS, cfg
 
 
 def getMenu():
-    req = requests.get(PAY_MENU, cookies=DataSaver.get("cookies"))
+    req = requests.get(PAY_MENU, cookies=dataSaver.get("cookies"))
     datas = req.json()['data']
     if req.status_code != 200:
         return []
@@ -285,7 +285,7 @@ class PayPage(QFrame):
         self.pages.setCurrentIndex(0)
 
     def pay(self):
-        req = requests.get(f"{PAY_PAY}?menu_id={self.tmp.id}", cookies=DataSaver.get("cookies"))
+        req = requests.get(f"{PAY_PAY}?menu_id={self.tmp.id}", cookies=dataSaver.get("cookies"))
         if req.status_code == 200:
             self.qrbox.setHtml("")
             self.setPay(req.json()['data'])
@@ -313,7 +313,7 @@ class PayPage(QFrame):
         self.pages.setCurrentIndex(0)
         self.qrbox.setHtml("")
         if self.order_id is not None:
-            req = requests.get(f"{PAY_SUCCESS}?order_id={self.order_id}", cookies=DataSaver.get("cookies"))
+            req = requests.get(f"{PAY_SUCCESS}?order_id={self.order_id}", cookies=dataSaver.get("cookies"))
             if req.status_code == 200:
                 req = req.json()
                 if req["data"]:
