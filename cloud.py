@@ -5,13 +5,14 @@ import traceback
 import winreg
 from pathlib import Path
 
+from PyQt5 import QtCore
 from PyQt5.QtCore import Qt, QLocale
 from PyQt5.QtWidgets import QApplication
 from qfluentwidgets import FluentTranslator
 
-import Index
-from Common.config import cfg
-from Common.ErrorBox import ErrorBox
+from app.Common.ErrorBox import ErrorBox
+from app.Common.config import cfg
+from app.Index.Verify import Verify
 
 
 def catch_exception(exc_type, exc_value, tb):
@@ -60,13 +61,13 @@ else:
     os.environ["QT_SCALE_FACTOR"] = str(cfg.get(cfg.dpiScale))
 
 QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps)
-
+QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_ShareOpenGLContexts)
 fluentTranslator = FluentTranslator(QLocale("zh_CN"))
 
 sys.excepthook = catch_exception
 app = QApplication(sys.argv)
 app.installTranslator(fluentTranslator)
 app.setAttribute(Qt.AA_DontCreateNativeWidgetSiblings)
-view = Index.Verify()
+view = Verify()
 view.show()
 sys.exit(app.exec_())

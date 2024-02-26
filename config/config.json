@@ -3,7 +3,7 @@
         "CheckUpdateAtStartUp": true
     },
     "Folders": {
-        "Download": "d:/Downloads"
+        "Download": "D:/Desktop"
     },
     "MainWindow": {
         "DpiScale": 1.25

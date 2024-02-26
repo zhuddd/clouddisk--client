@@ -8,7 +8,7 @@ cloud.py 主程序人口
 
 ### 打包命令(完整包)
 
-`nuitka --mingw --standalone --show-progress --windows-disable-console --output-dir=../out xxx.py`
+`nuitka --standalone --windows-disable-console --mingw --show-progress --output-dir=../out cloud.py`
 
 ### 打包命令(仅exe)
 
