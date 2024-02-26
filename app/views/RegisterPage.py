@@ -1,3 +1,5 @@
+import re
+
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import pyqtSignal
 from qfluentwidgets import PasswordLineEdit, PushButton, LineEdit
@@ -10,9 +12,15 @@ import hashlib
 from app.Common.MyRequests import MyRequestThread
 
 
+def validate_email(email):
+    pattern = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+    return bool(re.match(pattern, email))
+
+
 class RegisterPage(QtWidgets.QWidget):
     back = pyqtSignal()
-    def __init__(self,*args,**kwargs):
+
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.setObjectName("registerPage")
         self.gridLayout = QtWidgets.QGridLayout(self)
@@ -25,7 +33,7 @@ class RegisterPage(QtWidgets.QWidget):
         self.password_2 = PasswordLineEdit(self)
         self.password_2.setPlaceholderText("确认密码")
         self.gridLayout.addWidget(self.password_2, 2, 0, 1, 1)
-        self.pushbutton = PushButton("注册",self)
+        self.pushbutton = PushButton("注册", self)
         self.gridLayout.addWidget(self.pushbutton, 3, 0, 1, 1)
 
         StyleSheet.LOGIN.apply(self)
@@ -39,6 +47,9 @@ class RegisterPage(QtWidgets.QWidget):
         password2 = self.password_2.text()
         if email == "":
             warning(self, "邮箱为空")
+            return
+        if not validate_email(email):
+            warning(self, "邮箱格式错误")
             return
         if password != password2 or password == "":
             warning(self, "密码不一致或为空")
@@ -70,6 +81,3 @@ class RegisterPage(QtWidgets.QWidget):
     def onError(self, s: dict):
         self.pushbutton.setDisabled(False)
         error(self, s.get("message"))
-
-
-

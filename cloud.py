@@ -6,7 +6,7 @@ import winreg
 from pathlib import Path
 
 from PyQt5 import QtCore
-from PyQt5.QtCore import Qt, QLocale
+from PyQt5.QtCore import QLocale, QCoreApplication, Qt
 from PyQt5.QtWidgets import QApplication
 from qfluentwidgets import FluentTranslator
 
@@ -55,13 +55,12 @@ if cfg.get(cfg.dpiScale) == "Auto":
     QApplication.setHighDpiScaleFactorRoundingPolicy(
         Qt.HighDpiScaleFactorRoundingPolicy.PassThrough)
     QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
-    print("Auto", Qt.HighDpiScaleFactorRoundingPolicy.PassThrough, Qt.AA_EnableHighDpiScaling)
 else:
     os.environ["QT_ENABLE_HIGHDPI_SCALING"] = "0"
     os.environ["QT_SCALE_FACTOR"] = str(cfg.get(cfg.dpiScale))
 
 QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps)
-QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_ShareOpenGLContexts)
+QCoreApplication.setAttribute(QtCore.Qt.AA_ShareOpenGLContexts)
 fluentTranslator = FluentTranslator(QLocale("zh_CN"))
 
 sys.excepthook = catch_exception

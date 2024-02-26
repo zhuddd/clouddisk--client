@@ -11,6 +11,7 @@ from app.Common import config
 from app.Common.DataSaver import dataSaver
 from app.Common.HomeTitleBar import HomeTitleBar
 from app.Common.pipe_msg import PipeMsg
+from app.Index.Verify import Verify
 from app.components.ProfileCard import ProfileCard
 
 from app.Common.File import File
@@ -163,7 +164,6 @@ class Home(MSFluentWindow):
         menu.exec(self.userInterface.pos() + self.pos())
 
     def logout(self):
-        from app.Index import Verify
         dataSaver.set("cookies", None)
         self.verify = Verify()
         self.verify.show()

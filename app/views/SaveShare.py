@@ -2,6 +2,7 @@ import re
 
 import requests
 from PyQt5 import QtWidgets
+from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout
 from qfluentwidgets import TreeWidget, PushButton
 from qfluentwidgets.components.widgets.frameless_window import FramelessWindow
@@ -108,6 +109,7 @@ class SaveShare(FramelessWindow):
     def save(self):
         item = self.tree.selectedItems()
         if not item:
+            error(self, "请选择一个文件夹")
             return
         self.save_btn.setDisabled(True)
         self.repaint()
@@ -122,10 +124,14 @@ class SaveShare(FramelessWindow):
         else:
             success(self, "保存成功")
             self.save_btn.setDisabled(False)
+            self.t=QTimer()
+            self.t.timeout.connect(self.close)
+            self.t.start(1000)
 
     def newFolder(self):
         item = self.tree.selectedItems()
         if not item:
+            error(self, "请选择一个文件夹")
             return
         self.newfolder_btn.setDisabled(True)
         self.repaint()

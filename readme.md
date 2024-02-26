@@ -6,9 +6,18 @@ cloud.py 主程序人口
 
 --follow-imports 会将所有依赖的库打包进exe(可选)
 
-### 打包命令(完整包)
+### 打包命令(完整包) cloud.py
 
-`nuitka --standalone --windows-disable-console --mingw --show-progress --output-dir=../out cloud.py`
+`nuitka --standalone --mingw64 --show-progress --nofollow-imports --plugin-enable=pyqt5 --follow-import-to=app --output-dir=../out/dev cloud.py`
+
+`nuitka --standalone --windows-disable-console --mingw64 --nofollow-imports --show-progress --plugin-enable=pyqt5 --follow-import-to=app --output-dir=../out/r cloud.py`
+
+### 打包命令(完整包) open.py
+
+`nuitka --standalone --mingw64 --show-progress --output-dir=../out/dev open.py`
+
+`nuitka --standalone --windows-disable-console --mingw64 --show-progress --output-dir=../out/r open.py`
+
 
 ### 打包命令(仅exe)
 
