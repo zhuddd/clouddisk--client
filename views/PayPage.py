@@ -2,10 +2,10 @@ import markdown
 import requests
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import Qt, pyqtSignal, QUrl
-from PyQt5.QtGui import QFont, QPalette
+from PyQt5.QtGui import QFont
 from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings
-from PyQt5.QtWidgets import QFrame, QLabel, QHBoxLayout, QVBoxLayout, QStackedWidget
-from qfluentwidgets import FlowLayout, PushButton, ScrollArea, TextEdit, Action, FluentIcon, MenuAnimationType, \
+from PyQt5.QtWidgets import QFrame, QLabel, QVBoxLayout, QStackedWidget
+from qfluentwidgets import FlowLayout, PushButton, ScrollArea, Action, FluentIcon, MenuAnimationType, \
     RoundMenu, Theme
 from qframelesswindow.webengine import FramelessWebEngineView
 
@@ -140,7 +140,6 @@ class PayPage(QFrame):
         StyleSheet.PAY.apply(self)
         self.setMenu()
 
-
     def menuPage(self):
         self.ScrollArea = ScrollArea(self.pages)
         self.box = QtWidgets.QWidget()
@@ -252,8 +251,8 @@ class PayPage(QFrame):
             self.infotitle.setText(self.tmp.title)
             req = requests.get(f"{PAY_INFO}?menu_id={self.tmp.id}")
             if req.status_code == 200:
-                mode=cfg.get(cfg.themeMode)==Theme.DARK
-                self.infotext.setHtml(markdown_to_html(req.json()['data'],mode))
+                mode = cfg.get(cfg.themeMode) == Theme.DARK
+                self.infotext.setHtml(markdown_to_html(req.json()['data'], mode))
             else:
                 self.back()
         else:

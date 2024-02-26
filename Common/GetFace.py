@@ -11,19 +11,25 @@ class FaceTmp:
     封面缓存
     """
 
-    data={}
+    data = {}
+
     def setface(self, key, value):
         self.data[key] = value
 
     def getface(self, key):
         return self.data.get(key, None)
 
+
 faceTmp = FaceTmp()
 
+
 class GetFace(QThread):
+    """
+    获取封面
+    """
     signal = QtCore.pyqtSignal(bytes)
 
-    def __init__(self, face_id,fid):
+    def __init__(self, face_id, fid):
         super(GetFace, self).__init__()
         self.face_id = face_id
         self.fid = fid

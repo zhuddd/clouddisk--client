@@ -24,13 +24,13 @@ class FilePage(QtWidgets.QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.verticalLayout = QtWidgets.QVBoxLayout(self)
-        self.tool_box=QWidget(self)
+        self.tool_box = QWidget(self)
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.tool_box)
         self.tool_box.setLayout(self.horizontalLayout)
         self.dir = BreadcrumbBar(self)
-        self.horizontalLayout.addWidget(self.dir,1)
+        self.horizontalLayout.addWidget(self.dir, 1)
         self.menu_button = DropDownPushButton(FluentIcon.DOWN, '类型降序', self)
-        self.horizontalLayout.addWidget(self.menu_button,0)
+        self.horizontalLayout.addWidget(self.menu_button, 0)
         self.verticalLayout.addWidget(self.tool_box)
         self.ScrollArea = ScrollArea(self)
         self.ScrollArea.setFrameShape(QtWidgets.QFrame.NoFrame)
@@ -62,7 +62,7 @@ class FilePage(QtWidgets.QWidget):
 
         self.tmp = None  # type:File
         self.wait = None  # type:tuple[File,str]
-        self.sort=0
+        self.sort = 0
 
         self.update_action = None
         self.download_action = None
@@ -182,17 +182,17 @@ class FilePage(QtWidgets.QWidget):
         self.sharePage.show()
 
     def initSortMenu(self):
-        name= Action(FluentIcon.UP, '名称升序')
+        name = Action(FluentIcon.UP, '名称升序')
         name.triggered.connect(lambda: self.sortChange(1))
-        name_down= Action(FluentIcon.DOWN, '名称降序')
+        name_down = Action(FluentIcon.DOWN, '名称降序')
         name_down.triggered.connect(lambda: self.sortChange(2))
-        type= Action(FluentIcon.UP, '类型升序')
+        type = Action(FluentIcon.UP, '类型升序')
         type.triggered.connect(lambda: self.sortChange(3))
-        type_down= Action(FluentIcon.DOWN, '类型降序')
+        type_down = Action(FluentIcon.DOWN, '类型降序')
         type_down.triggered.connect(lambda: self.sortChange(4))
-        time= Action(FluentIcon.UP, '时间升序')
+        time = Action(FluentIcon.UP, '时间升序')
         time.triggered.connect(lambda: self.sortChange(5))
-        time_down= Action(FluentIcon.DOWN, '时间降序')
+        time_down = Action(FluentIcon.DOWN, '时间降序')
         time_down.triggered.connect(lambda: self.sortChange(6))
         self.menu = RoundMenu(parent=self)
         self.menu.addAction(name)
@@ -203,10 +203,10 @@ class FilePage(QtWidgets.QWidget):
         self.menu.addAction(time_down)
         self.menu_button.setMenu(self.menu)
 
-    def sortChange(self,sort):
-        self.sort=sort
-        self.menu_button.setText(self.menu.actions()[sort-1].text())
-        self.menu_button.setIcon(self.menu.actions()[sort-1].icon())
+    def sortChange(self, sort):
+        self.sort = sort
+        self.menu_button.setText(self.menu.actions()[sort - 1].text())
+        self.menu_button.setIcon(self.menu.actions()[sort - 1].icon())
         self.updatePage()
 
     def dragEnterEvent(self, event):
@@ -247,7 +247,7 @@ class FilePage(QtWidgets.QWidget):
         if key is None or key not in self.page_data.keys() or key is False:
             key = self.dir.currentItem().routeKey
         self.layout.takeAllWidgets()
-        self.getDir.get_dir(self.page_data[key], isinstance(self.page_data[key], str),self.sort)
+        self.getDir.get_dir(self.page_data[key], isinstance(self.page_data[key], str), self.sort)
 
     def errFunc(self, err):
         error(self, err)

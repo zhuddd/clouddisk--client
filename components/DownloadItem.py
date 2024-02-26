@@ -170,7 +170,3 @@ class DownloadItem(QtWidgets.QWidget, UpDownItem):
         self.req.start()
         self.on_start()
         self.state = 1
-
-
-
-

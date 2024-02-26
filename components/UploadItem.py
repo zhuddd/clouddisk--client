@@ -17,10 +17,9 @@ class UploadItem(QtWidgets.QWidget, UpDownItem):
 
     def __init__(self, path, f_id, uid, success=False, parent=None):
         """
-
         :param path: 文件路径
-        :param f_id: 文件id
-
+        :param f_id: 父文件夹id
+        :param uid: 上传组件id
         """
 
         self.check_request = None
@@ -215,5 +214,3 @@ class UploadItem(QtWidgets.QWidget, UpDownItem):
         self.request.stop.connect(self.on_stop)
         self.state = 1
         self.request.start()
-
-

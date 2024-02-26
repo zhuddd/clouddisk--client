@@ -4,7 +4,7 @@ from PyQt5.QtCore import QThread, pyqtSignal
 
 
 class PipeMsg(QThread):
-    msg=pyqtSignal(str)
+    msg = pyqtSignal(str)
 
     def __init__(self, parent=None):
         super(PipeMsg, self).__init__(parent)
@@ -33,7 +33,7 @@ class PipeMsg(QThread):
             data = self.read_from_pipe(pipe)
             self.msg.emit(data)
 
-    def read_from_pipe(self,pipe):
+    def read_from_pipe(self, pipe):
         buffer_size = 1024
         data = win32file.ReadFile(pipe, buffer_size)[1].decode('utf-8')
         return data

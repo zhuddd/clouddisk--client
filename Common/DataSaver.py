@@ -6,6 +6,9 @@ from Common.config import DAT_PATH
 
 
 class DataSaver:
+    """
+    保存数据
+    """
     def __init__(self):
         try:
             with open(DAT_PATH, 'rb') as file:

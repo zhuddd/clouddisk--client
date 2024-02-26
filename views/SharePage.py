@@ -1,8 +1,8 @@
 import requests
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QDate, Qt
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QGridLayout, QVBoxLayout, QLabel
-from qfluentwidgets import ZhDatePicker, ScrollArea, RadioButton, LineEdit, PushButton
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QLabel
+from qfluentwidgets import ZhDatePicker, RadioButton, LineEdit, PushButton
 from qfluentwidgets.components.widgets.frameless_window import FramelessWindow
 
 from Common import config
@@ -67,10 +67,6 @@ class SharePage(FramelessWindow):
         self.setWindowTitle("分享")
         self.resize(400, 400)
         self.vBoxLayout.setContentsMargins(30, self.titleBar.height(), 30, 30)
-        # self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        # self.setFrameShape(QtWidgets.QFrame.NoFrame)
-        # self.setViewportMargins(0, 80, 0, 20)
-        # self.setWidgetResizable(True)
 
     def setSlot(self):
         self.set_time2.clicked.connect(self.customTime)

@@ -22,11 +22,11 @@ class CheckFile(QThread):
 
 
 def create_tree(path):
-    '''
+    """
     创建文件树
     :param path: 文件路径
     :return: (tree,path_list)
-    '''
+    """
     try:
         path = Path(path)
     except:
@@ -52,11 +52,11 @@ def create_tree(path):
 
 
 def get_all_file(path):
-    '''
+    """
     获取所有文件
     :param path: 文件路径
     :return: 所有文件
-    '''
+    """
     try:
         path = Path(path)
     except:
@@ -73,11 +73,11 @@ def get_all_file(path):
 
 
 def get_file_type(path: str) -> str:
-    '''
+    """
     获取文件类型
     :param path: 文件路径
     :return: 文件类型
-    '''
+    """
 
     def get_(path: str) -> str:
         path = Path(path)
@@ -92,12 +92,12 @@ def get_file_type(path: str) -> str:
 
 
 def get_file_hash(path, key=""):
-    '''
+    """
     获取文件的md5值和使用md5值再次计算出的md5值
     :param path: 文件路径
     :param key: md5值的key
     :return: file_hash和check_hash的元组
-    '''
+    """
     if not Path(path).is_file():
         return "0", "0"
     import hashlib
@@ -127,6 +127,7 @@ def get_file_hash_file(file, key=""):
     m.update(file)
     return m.hexdigest()
 
+
 def convert_size(size_bytes):
     """
     转换文件大小
@@ -138,4 +139,4 @@ def convert_size(size_bytes):
     while size_bytes > 1024 and unit_index < len(units) - 1:
         size_bytes /= 1024
         unit_index += 1
-    return round(size_bytes,2), units[unit_index]
+    return round(size_bytes, 2), units[unit_index]

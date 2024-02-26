@@ -1,21 +1,10 @@
-import time
-from typing import Union
-
 from PyQt5 import QtCore
-from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QStackedWidget, QVBoxLayout, QWidget
 
-from qfluentwidgets import Pivot, setTheme, Theme, NavigationBar, FluentIconBase, NavigationItemPosition, \
-    NavigationBarPushButton, qrouter, FluentIcon
-from qfluentwidgets.common.animation import BackgroundAnimationWidget
-from qfluentwidgets.components.widgets.frameless_window import FramelessWindow
-from qfluentwidgets.window.fluent_window import FluentWindowBase, MSFluentTitleBar, MSFluentWindow
-from qframelesswindow import StandardTitleBar
-from qfluentwidgets import FluentIcon as FIF
+from qfluentwidgets import FluentIcon
+from qfluentwidgets.window.fluent_window import MSFluentWindow
 
 from Common import config
-from Common.StyleSheet import StyleSheet
 from Index import Home
 from views.LoginPage import LoginPage
 from views.RegisterPage import RegisterPage
@@ -47,7 +36,6 @@ class Verify(MSFluentWindow):
         self.register.back.connect(self.goLogin)
         self.update_password.back.connect(self.goLogin)
 
-
     def password(self):
         self.stackedWidget.setCurrentWidget(self.update_password)
 
@@ -68,5 +56,3 @@ class Verify(MSFluentWindow):
             self.home.close()
         self.home.show()
         self.hide()
-
-

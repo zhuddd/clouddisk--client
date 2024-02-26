@@ -1,1 +1,0 @@
-['D:\\Desktop\\PyQt-Fluent-Widgets-PyQt5\\out\\test.dist\\test.exe']

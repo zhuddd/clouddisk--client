@@ -1,13 +1,16 @@
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QLabel, QHBoxLayout, QSizePolicy, QVBoxLayout
-from qfluentwidgets import  SearchLineEdit
-from qframelesswindow import  TitleBarBase
+from qfluentwidgets import SearchLineEdit
+from qframelesswindow import TitleBarBase
 
 from Common.StyleSheet import StyleSheet
 
 
 class HomeTitleBar(TitleBarBase):
+    """
+    Home页面带有搜索框的标题栏
+    """
 
     searchSignal = pyqtSignal(str)
 
@@ -26,13 +29,13 @@ class HomeTitleBar(TitleBarBase):
         # add window icon
         self.iconLabel = QLabel(self)
         self.iconLabel.setFixedSize(20, 20)
-        self.hBoxLayout.addWidget( self.iconLabel, 0, Qt.AlignLeft | Qt.AlignVCenter)
+        self.hBoxLayout.addWidget(self.iconLabel, 0, Qt.AlignLeft | Qt.AlignVCenter)
         self.window().windowIconChanged.connect(self.setIcon)
         self.hBoxLayout.addSpacing(10)
 
         # add title label
         self.titleLabel = QLabel(self)
-        self.hBoxLayout.addWidget( self.titleLabel, 1, Qt.AlignLeft | Qt.AlignVCenter)
+        self.hBoxLayout.addWidget(self.titleLabel, 1, Qt.AlignLeft | Qt.AlignVCenter)
         self.titleLabel.setObjectName('titleLabel')
         self.window().windowTitleChanged.connect(self.setTitle)
 
@@ -59,6 +62,7 @@ class HomeTitleBar(TitleBarBase):
         self.hBoxLayout.addLayout(self.vBoxLayout, 0)
 
         StyleSheet.HOME_TITLE_BAR.apply(self)
+
     def setTitle(self, title):
         self.titleLabel.setText(title)
         self.titleLabel.adjustSize()

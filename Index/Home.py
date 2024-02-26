@@ -4,13 +4,12 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication
 
 from qfluentwidgets import (MSFluentWindow, NavigationItemPosition, InfoBadge, InfoBadgePosition,
-                            NavigationAvatarWidget, RoundMenu)
+                            RoundMenu, NavigationBarPushButton)
 from qfluentwidgets import FluentIcon
 
 from Common import config
 from Common.DataSaver import dataSaver
 from Common.HomeTitleBar import HomeTitleBar
-from Common.StyleSheet import StyleSheet
 from Common.pipe_msg import PipeMsg
 from components.ProfileCard import ProfileCard
 
@@ -42,9 +41,11 @@ class Home(MSFluentWindow):
         self.downLoadInterface = DownloadPage("downLoad", self)
         self.payInterface = PayPage("pay", self)
         self.settingInterface = Setting(self)
-        self.userInterface = NavigationAvatarWidget(
+        self.userInterface = NavigationBarPushButton(
+            FluentIcon.ROBOT,
             dataSaver.get('user', 'name'),
-            FluentIcon.ROBOT.path()
+            isSelectable=False,
+            parent=self
         )
 
         self.initWindow()

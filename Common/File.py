@@ -1,4 +1,7 @@
 class File:
+    """
+    文件类，用于存储文件信息
+    """
     def __init__(self, data):
         self.id = data.get('Id')
         self.name = data.get('file_name')

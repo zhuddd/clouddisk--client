@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from qfluentwidgets import (qconfig, QConfig, ConfigItem, OptionsConfigItem, BoolValidator,
-                            OptionsValidator, Theme, FolderValidator, ColorConfigItem)
+                            OptionsValidator, Theme, FolderValidator)
 
 
 def DownloadDir():
@@ -122,4 +122,3 @@ PAY_PAY = BASE_URL + "/pay/pay"
 
 PAY_SUCCESS = BASE_URL + "/pay/paysuccess"
 '''支付验证 URL 地址'''
-

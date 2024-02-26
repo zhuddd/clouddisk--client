@@ -1,8 +1,8 @@
 import hashlib
 
 import requests
-from PyQt5.QtCore import Qt, pyqtSignal, QTimer
-from PyQt5.QtWidgets import QGridLayout, QLabel, QWidget
+from PyQt5.QtCore import pyqtSignal, QTimer
+from PyQt5.QtWidgets import QGridLayout, QWidget
 from qfluentwidgets import LineEdit, PasswordLineEdit, PushButton
 
 from Common import config

@@ -3,12 +3,11 @@ from PyQt5.QtCore import Qt, QUrl, pyqtSignal
 from PyQt5.QtGui import QDesktopServices, QColor
 from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings
 from qfluentwidgets import PushButton, TeachingTip, TeachingTipTailPosition, TeachingTipView, Theme
-from requests.utils import dict_from_cookiejar
 
 from Common.DataSaver import dataSaver
 from Common.File import File
 from Common.StyleSheet import StyleSheet
-from Common.config import FILE_PREVIEW,FILE_GET_KEY, cfg
+from Common.config import FILE_PREVIEW, FILE_GET_KEY, cfg
 
 
 class FilePreview(QWebEngineView):
@@ -48,11 +47,11 @@ class FilePreview(QWebEngineView):
     def setFile(self, file: File):
         isDark = cfg.get(cfg.themeMode) == Theme.DARK
         self.file = file
-        res= requests.get(FILE_GET_KEY, params={"file_id":file.id}, cookies=dataSaver.get('cookie'))
-        if res.status_code !=200:
+        res = requests.get(FILE_GET_KEY, params={"file_id": file.id}, cookies=dataSaver.get('cookie'))
+        if res.status_code != 200:
             self.setHtml("<h1>文件预览失败</h1>")
-        k=res.json()["data"]
-        self.path=f'{FILE_PREVIEW}/{k}'
+        k = res.json()["data"]
+        self.path = f'{FILE_PREVIEW}/{k}'
         self.setUrl(QUrl(self.path))
         self.showBottomTip()
         self.showFullScreen()

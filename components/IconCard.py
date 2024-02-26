@@ -3,7 +3,7 @@ from typing import Union
 from PyQt5.QtCore import QTimer, pyqtSignal, Qt, QByteArray
 from PyQt5.QtGui import QIcon, QPixmap, QContextMenuEvent
 from PyQt5.QtWidgets import QVBoxLayout, QLabel, QFrame
-from qfluentwidgets import IconWidget, ToolButton, FluentIconBase
+from qfluentwidgets import IconWidget,  FluentIconBase
 
 from Common.GetFace import GetFace
 from Common.File import File
@@ -61,7 +61,7 @@ class IconCard(QFrame):
         self.iconWidget.setIcon(icon)
 
     def setText(self):
-        self.nameLabel.setText(self.file.name)
+        self.nameLabel.setText(self.file.name if len(self.file.name) < 7 else self.file.name[:7] + "...")
 
     def setTip(self):
         size = convert_size(self.file.size)
@@ -91,5 +91,3 @@ class IconCard(QFrame):
             self.left_clicked.emit(self.file)
             self.singleClick = False
 
-    def setSelected(self):
-        pass

@@ -9,12 +9,13 @@ from Common.File import File
 from Common.config import FILE_DIR
 
 
-
-
-
 class GetDir(QThread):
-    update=pyqtSignal(File)
-    err=pyqtSignal(str)
+    """
+    获取文件夹内文件列表
+    """
+    update = pyqtSignal(File)
+    err = pyqtSignal(str)
+
     def __init__(self):
         super(GetDir, self).__init__()
         self.sortBy = 0
@@ -24,7 +25,7 @@ class GetDir(QThread):
         self.path = FILE_DIR
         self.set_icon = None
 
-    def get_dir(self, msg: Union[str, int], find_type=False,sortBy=0):
+    def get_dir(self, msg: Union[str, int], find_type=False, sortBy=0):
         '''
         获取文件列表
         :param msg: 文件夹id或者文件名(查找模式)
@@ -38,7 +39,7 @@ class GetDir(QThread):
         self.start()
 
     def run(self):
-        req=requests.get(f"{self.path}/{1 if self.find_type else 0}/{self.msg}",cookies=dataSaver.get("cookies"))
+        req = requests.get(f"{self.path}/{1 if self.find_type else 0}/{self.msg}", cookies=dataSaver.get("cookies"))
         if req.status_code != 200:
             self.err.emit("网络错误")
             return None
@@ -74,4 +75,3 @@ class GetDir(QThread):
         for f in file_list:
             f.icon = MyIcon(f.type)
             self.update.emit(f)
-

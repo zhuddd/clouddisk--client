@@ -6,7 +6,7 @@ from qfluentwidgets import MessageBoxBase, SubtitleLabel, LineEdit, Dialog
 
 
 class ErrorBox(Dialog):
-    """ Custom message box """
+    """ 自定义报错消息框 """
 
     def __init__(self,title,msg, parent=None):
         super().__init__(title,msg, parent)

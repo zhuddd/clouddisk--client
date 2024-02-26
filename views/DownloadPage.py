@@ -4,7 +4,7 @@ from uuid import uuid1
 import requests
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import QTimer, QThread
-from qfluentwidgets import FluentIcon as FIF
+from qfluentwidgets import FluentIcon
 
 from Common.DataSaver import dataSaver
 from Common.StyleSheet import StyleSheet
@@ -29,8 +29,8 @@ class DownloadPage(QtWidgets.QWidget, UpDown):
         self.controller.taskNum.connect(self.taskNum.emit)
 
         self.max_thread.setValue(dataSaver.get("download_max_thread", 5))
-        self.toolBox.addItem(routeKey="Play", onClick=self.controkkerRun, icon=FIF.PLAY_SOLID)
-        self.toolBox.addItem(routeKey="Stop", onClick=self.controllerStop, icon=FIF.PAUSE_BOLD)
+        self.toolBox.addItem(routeKey="Play", onClick=self.controkkerRun, icon=FluentIcon.PLAY_SOLID)
+        self.toolBox.addItem(routeKey="Stop", onClick=self.controllerStop, icon=FluentIcon.PAUSE_BOLD)
 
         self.circulate = QTimer()
         self.circulate.timeout.connect(lambda: self.controller.setMax(self.max_thread.value()))
@@ -137,10 +137,10 @@ class DownLoad(QThread):
         try:
             url = FILE_DOWNLOAD_TREE
             req = requests.post(url,
-                                 data={"file_id": f_id},
-                                 cookies=dataSaver.get("cookie")
-                                 )
-            new_list=req.json()
+                                data={"file_id": f_id},
+                                cookies=dataSaver.get("cookie")
+                                )
+            new_list = req.json()
             if new_list["status"]:
                 tree = new_list["data"]
                 file_list = self.init_task_list(tree)

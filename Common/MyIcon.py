@@ -9,14 +9,14 @@ class MyIcon(FluentIconBase, Enum):
     AI = "file_ai"
     DEFAULT = "default"
     BT = "file_bt"
-    CAD="file_cad"
+    CAD = "file_cad"
     CLOUD = "file_cloud"
     CODE = "file_code"
     EXCEL = "file_excel"
-    EXE="file_exe"
+    EXE = "file_exe"
     FLASH = "file_flash"
     HTML = "file_html"
-    IMG="file_img"
+    IMG = "file_img"
     ISO = "file_iso"
     MUSIC = "file_music"
     PDF = "file_pdf"
@@ -29,6 +29,4 @@ class MyIcon(FluentIconBase, Enum):
     FOLDER = "folder"
 
     def path(self, theme=Theme.AUTO):
-        return str(ICON_PATH /getIconColor(theme)/ f"{self.value}.svg")
-
-
+        return str(ICON_PATH / getIconColor(theme) / f"{self.value}.svg")

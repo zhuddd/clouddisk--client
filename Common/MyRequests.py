@@ -1,5 +1,4 @@
 import json
-from pathlib import Path
 import time
 from urllib.parse import unquote
 
@@ -58,7 +57,7 @@ class ResumableUploader(QThread):
 
     def __init__(self, url, filepath, file_hash, check_hash, start_byte=0, chunk_size=1024 * 1024, auto_size=False,
                  all_file=True):
-        '''
+        """
         多线程上传文件，支持断点续传
         finish: -1 上传失败 0 暂停 1 上传成功
         :param url: 上传地址
@@ -69,7 +68,7 @@ class ResumableUploader(QThread):
         :param chunk_size:  每次上传的大小 default 1MB
         :param auto_size:  自动调整上传大小
         :param all_file:  上传全部文件
-        '''
+        """
         super().__init__()
         self.is_run = False
         self.file_size = 0
@@ -180,10 +179,10 @@ class ResumableUploader(QThread):
                         self.error.emit("上传失败")
                     self.response.emit(r)
                 except Exception as e:
-                    self.error.emit( "服务器错误")
+                    self.error.emit("服务器错误")
                 if not self.all_file:
                     break
-        if  self.is_run:
+        if self.is_run:
             self.finish.emit()
         else:
             self.stop.emit()
@@ -197,7 +196,7 @@ class ResumableDownloader(QThread):
     stop = pyqtSignal()
     set_file_name = pyqtSignal(str)
 
-    def __init__(self, url, save_path, f_id,uid):
+    def __init__(self, url, save_path, f_id, uid):
         """
         多线程下载文件，支持断点续传
         :param url:
@@ -214,7 +213,7 @@ class ResumableDownloader(QThread):
         self.url = url
         self.save_path = Path(save_path)
         self.f_id = f_id
-        self.uid=uid
+        self.uid = uid
         self.started_byte = 0
 
     def run(self):
@@ -233,10 +232,10 @@ class ResumableDownloader(QThread):
         self.is_run = False
 
     def file_name_replace(self, file_name):
-        name=file_name
+        name = file_name
         t = 0
         while True:
-            t+=1
+            t += 1
             if self.save_path.joinpath(file_name).exists():
                 if '.' in name:
                     a = len(name.split(".")[-1])
@@ -258,7 +257,7 @@ class ResumableDownloader(QThread):
             self.file_size = data.get("file_size")
             self.file_hash = data.get("file_hash")
             self.set_file_name.emit(self.file_name)
-        self.file_path = self.save_path / str(self.file_hash+self.uid)
+        self.file_path = self.save_path / str(self.file_hash + self.uid)
         if not self.file_path.exists():
             try:
                 self.file_path.parent.mkdir(parents=True)
@@ -281,7 +280,7 @@ class ResumableDownloader(QThread):
             size = int(res.headers.get("Content-Length"))
             mode = 'wb' if self.started_byte == 0 else 'ab'
             with open(self.file_path, mode) as f:
-                t=time.time()
+                t = time.time()
                 for chunk in res.iter_content(max(min(int(size / 100), 1024), 1)):
                     if self.is_run is False:
                         self.first = True
@@ -290,13 +289,13 @@ class ResumableDownloader(QThread):
                         return
                     f.write(chunk)
                     download_size += len(chunk)
-                    if time.time()-t>0.1:
-                        t=time.time()
+                    if time.time() - t > 0.1:
+                        t = time.time()
                         self.progress.emit((download_size, self.file_size))
                 self.progress.emit((download_size, self.file_size))
             file_hash, _ = get_file_hash(str(self.file_path))
             if file_hash == self.file_hash:
-                file_name=self.file_name_replace(file_name)
+                file_name = self.file_name_replace(file_name)
                 self.file_path.rename(self.file_path.parent / file_name)
                 self.set_file_name.emit(file_name)
                 self.finish.emit()
@@ -304,7 +303,7 @@ class ResumableDownloader(QThread):
                 self.error.emit("文件损坏")
             self.is_run = False
         except Exception as e:
-            print("MyRequest Download write_file",e)
+            print("MyRequest Download write_file", e)
             self.run()
 
     def download_file(self):
@@ -313,13 +312,13 @@ class ResumableDownloader(QThread):
         :return:
         """
         self.is_run = True
-        with  requests.get(self.url,
-                           params={"file_id": self.f_id, "Only_header": self.first},
-                           stream=not self.first,
-                           cookies=dataSaver.get("cookies"),
-                           headers={"Range": f"bytes={self.started_byte}-"},
-                           ) as res:
-            if res.status_code in (200,206):
+        with requests.get(self.url,
+                          params={"file_id": self.f_id, "Only_header": self.first},
+                          stream=not self.first,
+                          cookies=dataSaver.get("cookies"),
+                          headers={"Range": f"bytes={self.started_byte}-"},
+                          ) as res:
+            if res.status_code in (200, 206):
                 if self.first:
                     self.check_file(res)
                 else:
@@ -329,17 +328,17 @@ class ResumableDownloader(QThread):
                 self.is_run = False
 
 
-if __name__ == '__main__':
-    import sys
-    from PyQt5 import QtWidgets
-
-    # 示例用法
-    url = 'http://110.40.174.23/download/download'
-    file_path = "D:\Desktop\\test"
-    # url = "https://cloud.tencent.com/developer/article/2192086"
-
-    uploader = ResumableDownloader(url, file_path, f_id=12)
-
-    app = QtWidgets.QApplication(sys.argv)
-    uploader.start()
-    sys.exit(app.exec_())
+# if __name__ == '__main__':
+#     import sys
+#     from PyQt5 import QtWidgets
+#
+#     # 示例用法
+#     url = 'http://0000000/download/download'
+#     file_path = "D:\Desktop\\test"
+#     # url = "https://0000000/developer/article/2192086"
+#
+#     uploader = ResumableDownloader(url, file_path, f_id=12)
+#
+#     app = QtWidgets.QApplication(sys.argv)
+#     uploader.start()
+#     sys.exit(app.exec_())

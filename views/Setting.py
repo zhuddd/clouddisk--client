@@ -1,5 +1,5 @@
 # coding:utf-8
-from qfluentwidgets import (SettingCardGroup, SwitchSettingCard,
+from qfluentwidgets import (SettingCardGroup,
                             OptionsSettingCard, PushSettingCard, ScrollArea,
                             ExpandLayout, CustomColorSettingCard,
                             setTheme, setThemeColor)
@@ -65,7 +65,6 @@ class Setting(ScrollArea):
             parent=self.personalGroup
         )
 
-
         self.__initWidget()
 
     def __initWidget(self):
@@ -93,7 +92,6 @@ class Setting(ScrollArea):
         self.personalGroup.addSettingCard(self.themeCard)
         self.personalGroup.addSettingCard(self.themeColorCard)
         self.personalGroup.addSettingCard(self.zoomCard)
-
 
         # 将设置卡组添加到布局
         self.expandLayout.setSpacing(28)
@@ -129,5 +127,5 @@ class Setting(ScrollArea):
             self.__onDownloadFolderCardClicked)
 
         # personalization
-        self.themeCard.optionChanged.connect(lambda ci: setTheme(cfg.get(ci),lazy=True))
+        self.themeCard.optionChanged.connect(lambda ci: setTheme(cfg.get(ci), lazy=True))
         self.themeColorCard.colorChanged.connect(setThemeColor)
