@@ -1,7 +1,7 @@
 import os
 import pathlib
 
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtNetwork
 from PyQt5.QtCore import pyqtSignal, QUrl, QTimer
 from PyQt5.QtNetwork import QNetworkRequest
 from qfluentwidgets import FluentIcon
@@ -48,19 +48,20 @@ class DownloadItem(QtWidgets.QWidget, UpDownItem):
         self.name.setText(self.file_name)
         self.initBtn()
 
-        self.url = QUrl(config.FILE_DOWNLOAD + f"?file_id={f_id}&Only_header={False}")
+        self.url = QUrl(config.FILE_DOWNLOAD + f"?file_id={f_id}")
         self.manager = dataSaver.QNetworkAccessManager_cookies()
         self.manager.finished.connect(self.on_finished)
         self.timer = QTimer()
         self.timer.timeout.connect(self.update_download_speed)
 
     def initBtn(self):
-        self.start_btn.clicked.connect(self.start_download)
+        self.progress.setMaximum(1000)
+        self.start_btn.clicked.connect(self.start)
         self.start_btn.setIcon(FluentIcon.PLAY_SOLID)
-        self.stop_btn.clicked.connect(self.pause_download)
+        self.stop_btn.clicked.connect(self.pause)
         self.stop_btn.setIcon(FluentIcon.PAUSE_BOLD)
         self.re_btn.setIcon(FluentIcon.SYNC)
-        self.re_btn.clicked.connect(self.start_download)
+        self.re_btn.clicked.connect(self.start)
         self.close_btn.setIcon(FluentIcon.CLOSE)
         self.close_btn.clicked.connect(self.close_download)
         self.stop_btn.hide()
@@ -87,13 +88,13 @@ class DownloadItem(QtWidgets.QWidget, UpDownItem):
         r.setRawHeader(b"Range", f"bytes={self.downloaded_size}-".encode())
         return r
 
-    def start_download(self, btn=True):
+    def start(self, btn=True):
         self.stop_btn.show()
         self.start_btn.hide()
         self.re_btn.hide()
         if self.statu == Status.SUCCESS and btn:
             os.system(f"explorer /select , {self.file_path}")
-        if self.statu == Status.DOWNLOADING:
+        if self.statu == Status.RUNNING:
             return
         if self.tmp_file.exists():
             self.file = open(self.tmp_file, "ab")
@@ -103,11 +104,11 @@ class DownloadItem(QtWidgets.QWidget, UpDownItem):
         self.reply = self.manager.get(self.newQNetworkRequest())
         self.reply.readyRead.connect(self.on_ready_read)
         self.reply.downloadProgress.connect(self.on_download_progress)
-        self.timer.start(500)
-        self.statu = Status.DOWNLOADING
+        self.timer.start(1000)
+        self.statu = Status.RUNNING
 
-    def pause_download(self):
-        if self.statu != Status.DOWNLOADING:
+    def pause(self):
+        if self.statu != Status.RUNNING:
             return
         if self.reply:
             self.statu = Status.PAUSED
@@ -142,8 +143,7 @@ class DownloadItem(QtWidgets.QWidget, UpDownItem):
         if bytesTotal <= 0:
             return
         self.total_size = bytesTotal
-        self.progress.setMaximum(self.downloaded_size + bytesTotal)
-        self.progress.setValue(self.downloaded_size + bytesReceived)
+        self.progress.setValue(int((self.downloaded_size + bytesReceived)/(self.downloaded_size + bytesTotal)*1000))
         self.progres_text.setText(
             f"已下载: {(self.downloaded_size + bytesReceived) / (self.downloaded_size + bytesTotal) * 100:.2f}%")
 
@@ -174,13 +174,13 @@ class DownloadItem(QtWidgets.QWidget, UpDownItem):
             self.info.setText("已暂停")
             self.start_btn.show()
             self.stop_btn.hide()
-        elif self.statu == Status.DOWNLOADING:
-            if repy.error() != 0:
+        elif self.statu == Status.RUNNING:
+            if repy.error() == QtNetwork.QNetworkReply.NoError:
+                self.check = CheckFile(self.tmp_file)
+                self.check.hashes.connect(self.Check)
+                self.check.start()
+            else:
                 self.checkError()
-                return
-            self.check = CheckFile(self.tmp_file)
-            self.check.hashes.connect(self.Check)
-            self.check.start()
 
     def Check(self, hash):
         if hash[0] == self.md5:

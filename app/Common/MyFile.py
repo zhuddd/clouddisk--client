@@ -21,7 +21,7 @@ class CheckFile(QThread):
         self.hashes.emit(get_file_hash(self.path))
 
 
-def create_tree(path):
+def create_tree(path)->(dict,dict):
     """
     创建文件树
     :param path: 文件路径

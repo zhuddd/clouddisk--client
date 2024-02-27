@@ -54,8 +54,8 @@ class DownloadPage(QtWidgets.QWidget, UpDown):
     def allStop(self):
         for i in self.task_wait:
             uid = i["uid"]
-            if self.downloadItems[uid].statu in (Status.DOWNLOADING, Status.WAITING):
-                self.downloadItems[uid].pause_download()
+            if self.downloadItems[uid].statu in (Status.RUNNING, Status.WAITING):
+                self.downloadItems[uid].pause()
         self._run = False
         self.circulate.stop()
 
@@ -67,9 +67,9 @@ class DownloadPage(QtWidgets.QWidget, UpDown):
                     return
                 uid = i["uid"]
                 if self.downloadItems[uid].statu in (Status.NOT_STARTED,Status.WAITING):
-                    self.downloadItems[uid].start_download()
+                    self.downloadItems[uid].start()
                     n -= 1
-                elif self.downloadItems[uid].statu == Status.DOWNLOADING:
+                elif self.downloadItems[uid].statu == Status.RUNNING:
                     n -= 1
 
     def addTask(self, fid):
