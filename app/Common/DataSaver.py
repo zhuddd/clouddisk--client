@@ -1,3 +1,5 @@
+from PyQt5.QtCore import QByteArray
+from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkCookieJar, QNetworkCookie
 from requests.cookies import RequestsCookieJar
 
 import pickle
@@ -9,6 +11,7 @@ class DataSaver:
     """
     保存数据
     """
+
     def __init__(self):
         try:
             with open(DAT_PATH, 'rb') as file:
@@ -54,6 +57,22 @@ class DataSaver:
                                      "Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders")
             download_dir = winreg.QueryValueEx(reg_key, "{374DE290-123F-4565-9164-39C4925E467B}")[0]
         return download_dir
+
+    def QNetworkAccessManager_cookies(self) -> QNetworkAccessManager:
+        r = QNetworkAccessManager()
+        cookies = self.get("cookies", None)
+        if cookies is not None:
+            qnetwork_cookie_jar = QNetworkCookieJar()
+            for cookie in cookies:
+                qcookie = QNetworkCookie(cookie.name.encode(), cookie.value.encode())
+                qcookie.setPath(cookie.path)
+                qcookie.setDomain(cookie.domain)
+                qcookie.setSecure(cookie.secure)
+                qcookie.setHttpOnly(cookie.has_nonstandard_attr("httponly"))
+                qnetwork_cookie_jar.insertCookie(qcookie)
+            r.setCookieJar(qnetwork_cookie_jar)
+
+        return r
 
 
 dataSaver = DataSaver()

@@ -3,13 +3,13 @@
         "CheckUpdateAtStartUp": true
     },
     "Folders": {
-        "Download": "D:/Desktop"
+        "Download": "d:/Downloads"
     },
     "MainWindow": {
         "DpiScale": 1.25
     },
     "QFluentWidgets": {
         "ThemeColor": "#ff009faa",
-        "ThemeMode": "Dark"
+        "ThemeMode": "Light"
     }
 }
