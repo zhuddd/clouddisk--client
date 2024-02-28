@@ -16,6 +16,8 @@ from app.Common.File import File
 from app.views.SharePage import SharePage
 
 
+
+
 class FilePage(QtWidgets.QWidget):
     filePath = QtCore.pyqtSignal(tuple)
     preview = QtCore.pyqtSignal(File)
@@ -177,8 +179,11 @@ class FilePage(QtWidgets.QWidget):
 
     def shareAction(self):
         file = self.tmp
-        self.sharePage = SharePage(file)
         self.tmp = None
+        if self.sharePage is not None:
+            self.sharePage.close()
+            self.sharePage = None
+        self.sharePage = SharePage(file)
         self.sharePage.show()
 
     def initSortMenu(self):
@@ -256,7 +261,7 @@ class FilePage(QtWidgets.QWidget):
         """
         将文件图标小部件添加到相应页面的布局中。
         """
-        widget = IconCard(self.box, file)
+        widget = IconCard(self, file)
         widget.left_clicked_double.connect(self.iconCardClick)
         # widget.left_clicked.connect(self.fileDownload.emit)
         widget.right_clicked.connect(self.contextMenuEvent)

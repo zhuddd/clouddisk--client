@@ -9,7 +9,8 @@ from qfluentwidgets import FluentIcon
 
 from app.Common import config
 from app.Common.DataSaver import dataSaver
-from app.Common.HomeTitleBar import HomeTitleBar
+from app.components.CloseMsgBox import CloseMsgBox
+from app.components.HomeTitleBar import HomeTitleBar
 from app.Common.pipe_msg import PipeMsg
 from app.Index.Verify import Verify
 from app.components.ProfileCard import ProfileCard
@@ -22,6 +23,7 @@ from app.views.PayPage import PayPage
 from app.views.SaveShare import SaveShare
 from app.views.Setting import Setting
 from app.views.ShareListPage import ShareListPage
+from app.views.SystemTray import SystemTray
 from app.views.UploadPage import UploadPage
 
 
@@ -29,6 +31,7 @@ class Home(MSFluentWindow):
 
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.systemTray = None
         self.save_share = None
         self.pipe = None
         self.setObjectName("mainWindow")
@@ -68,6 +71,8 @@ class Home(MSFluentWindow):
         self.newTitleBar.searchSignal.connect(self.findFile)
         self.downLoadInterface.taskNum.connect(self.setDownloadTaskNum)
         self.upLoadInterface.taskNum.connect(self.setUploadTaskNum)
+        self.systemTray.showApp.connect(self.show)
+        self.systemTray.closeApp.connect(self.trayClose)
 
     def findFile(self, fileName):
         self.fileInterface.addInterface(f"搜索:{fileName}", fileName)
@@ -155,6 +160,8 @@ class Home(MSFluentWindow):
         desktop = QApplication.desktop().availableGeometry()
         w, h = desktop.width(), desktop.height()
         self.move(w // 2 - self.width() // 2, h // 2 - self.height() // 2)
+        self.systemTray = SystemTray(self)
+        self.systemTray.show()
 
     def userInfo(self):
         menu = RoundMenu(parent=self)
@@ -180,3 +187,17 @@ class Home(MSFluentWindow):
             self.navigationInterface.show()
             self.titleBar.show()
             self.hBoxLayout.setContentsMargins(0, 48, 0, 0)
+
+    def close(self):
+        if self.fileInterface.sharePage is not None:
+            self.fileInterface.sharePage.close()
+            self.fileInterface.sharePage = None
+        w = CloseMsgBox(self)
+        if w.exec():
+            if w.isquit():
+                super().close()
+            else:
+                self.hide()
+
+    def trayClose(self):
+        super().close()

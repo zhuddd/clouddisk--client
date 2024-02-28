@@ -1,52 +1,53 @@
 from typing import Union
 
-from PyQt5.QtCore import QTimer, pyqtSignal, Qt, QByteArray
-from PyQt5.QtGui import QIcon, QPixmap, QContextMenuEvent
-from PyQt5.QtWidgets import QVBoxLayout, QLabel, QFrame
-from qfluentwidgets import IconWidget,  FluentIconBase
+from PyQt5.QtCore import pyqtSignal, Qt, QByteArray, QPropertyAnimation, QPoint
+from PyQt5.QtGui import QIcon, QPixmap, QContextMenuEvent, QColor
+from PyQt5.QtWidgets import QVBoxLayout
+from qfluentwidgets import IconWidget, FluentIconBase, CaptionLabel, SimpleCardWidget, isDarkTheme, ToolTipFilter, \
+    ToolTipPosition
+from qfluentwidgets.common.animation import DropShadowAnimation
 
 from app.Common.File import File
 from app.Common.GetFace import GetFace
 from app.Common.MyFile import convert_size
 
 
-class IconCard(QFrame):
-    """ Icon card """
-
+class IconCard(SimpleCardWidget):
+    """ Emoji card """
     left_clicked = pyqtSignal(File)
     left_clicked_double = pyqtSignal(File)
     right_clicked = pyqtSignal(QContextMenuEvent, File)
 
-    def __init__(self, parent, file: File):
-        super().__init__(parent=parent)
-        self.icon = file.icon
-        self.name = file.name
-        self.Id = file.id
-        self.face = file.face
+    def __init__(self, parent=None, file: File = None):
+        super().__init__(parent)
+        self.shadowAni = DropShadowAnimation(self, hoverColor=QColor(0, 0, 0, 20))
+        self.shadowAni.setOffset(0, 5)
+        self.shadowAni.setBlurRadius(38)
+
+        self.elevatedAni = QPropertyAnimation(self, b'pos', self)
+        self.elevatedAni.setDuration(100)
+
+        self._originalPos = self.pos()
+        self.setBorderRadius(8)
         self.file = file
-        self.fid = file.fid
+        self.iconWidget = IconWidget(self.file.icon, self)
+        # self.iconWidget = IconWidget(self)
+        self.label = CaptionLabel(self.file.name if len(self.file.name) <= 10 else self.file.name[:10] + "...", self)
 
-        self.iconWidget = IconWidget(self.icon, self)
-        self.nameLabel = QLabel(self)
+        self.iconWidget.setFixedSize(68, 68)
+
         self.vBoxLayout = QVBoxLayout(self)
+        self.vBoxLayout.setAlignment(Qt.AlignCenter)
+        self.vBoxLayout.addStretch(1)
+        self.vBoxLayout.addWidget(self.iconWidget, 0, Qt.AlignCenter)
+        self.vBoxLayout.addStretch(1)
+        self.vBoxLayout.addWidget(
+            self.label, 0, Qt.AlignHCenter | Qt.AlignBottom)
 
-        self.setFixedSize(100, 100)
-        self.vBoxLayout.setContentsMargins(5, 5, 5, 5)
-        self.vBoxLayout.setAlignment(Qt.AlignTop)
-        self.iconWidget.setFixedSize(70, 70)
-        self.vBoxLayout.addWidget(self.iconWidget, 0, Qt.AlignHCenter)
-        self.vBoxLayout.addWidget(self.nameLabel, 0, Qt.AlignHCenter)
-
-        self.setText()
+        self.setFixedSize(120, 120)
         self.setTip()
-
-        self.singleClick = False
-        self.timer = QTimer()
-        self.timer.setSingleShot(True)
-        self.timer.timeout.connect(self.checkClick)
-
-        if self.face is None or self.face is True:
-            self.get_face = GetFace(self.Id,self.fid)
+        if self.file.face is None or self.file.face is True:
+            self.get_face = GetFace(self.file.id, self.file.fid)
             self.get_face.signal.connect(self.setIcon)
             self.get_face.start()
 
@@ -60,34 +61,49 @@ class IconCard(QFrame):
             icon = QIcon(pixmap)
         self.iconWidget.setIcon(icon)
 
-    def setText(self):
-        self.nameLabel.setText(self.file.name if len(self.file.name) < 7 else self.file.name[:7] + "...")
-
     def setTip(self):
         size = convert_size(self.file.size)
         tip = f"{self.file.name}\n上传时间：{self.file.time}"
         if size[0] != 0:
             tip += f"\n文件大小：{size[0]}{size[1]}"
         self.setToolTip(tip)
+        self.installEventFilter(ToolTipFilter(self, 800, ToolTipPosition.TOP))
 
-    def setToolTip(self, a0):
-        super().setToolTip(str(a0))
-
-    def mousePressEvent(self, event):
+    def mouseDoubleClickEvent(self, event):
         if event.button() == Qt.LeftButton:
-            self.singleClick = True
-            self.timer.start(200)
+            self.left_clicked_double.emit(self.file)
 
     def contextMenuEvent(self, event):
         self.right_clicked.emit(event, self.file)
 
-    def mouseDoubleClickEvent(self, event):
-        if event.button() == Qt.LeftButton and self.singleClick == True:
-            self.left_clicked_double.emit(self.file)
-            self.singleClick = False
+    def enterEvent(self, e):
+        super().enterEvent(e)
 
-    def checkClick(self):
-        if self.singleClick:
-            self.left_clicked.emit(self.file)
-            self.singleClick = False
+        # if self.elevatedAni.state() != QPropertyAnimation.Running:
+        #     print("running")
+        #     self._originalPos = self.pos()
+        if self._originalPos.isNull():
+            return
 
+        self._startElevateAni(self.pos(), self.pos() - QPoint(0, 3))
+
+    def leaveEvent(self, e):
+        super().leaveEvent(e)
+        self._startElevateAni(self.pos(), self._originalPos)
+
+    def mousePressEvent(self, e):
+        super().mousePressEvent(e)
+        self._startElevateAni(self.pos(), self._originalPos)
+
+    def _startElevateAni(self, start, end):
+        if end.isNull():
+            return
+        self.elevatedAni.setStartValue(start)
+        self.elevatedAni.setEndValue(end)
+        self.elevatedAni.start()
+
+    def _hoverBackgroundColor(self):
+        return QColor(255, 255, 255, 16) if isDarkTheme() else QColor(255, 255, 255)
+
+    def _pressedBackgroundColor(self):
+        return QColor(255, 255, 255, 6 if isDarkTheme() else 118)

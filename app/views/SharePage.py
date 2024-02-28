@@ -1,28 +1,27 @@
 import requests
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QDate, Qt
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QLabel
-from qfluentwidgets import ZhDatePicker, RadioButton, LineEdit, PushButton
-from qfluentwidgets.components.widgets.frameless_window import FramelessWindow
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout
+from qfluentwidgets import ZhDatePicker, RadioButton, LineEdit, PushButton, CaptionLabel
 
 from app.Common import config
 from app.Common.DataSaver import dataSaver
 from app.Common.File import File
-from app.Common.StyleSheet import StyleSheet
 from app.Common.Tost import error, success
 from app.components.IconCard import IconCard
+from app.components.IndependentWindow import IndependentWindow
 
 
-class SharePage(FramelessWindow):
+class SharePage(IndependentWindow):
 
     def __init__(self, file: File = None, parent=None):
         super().__init__(parent=parent)
-        StyleSheet.SHARE.apply(self)
         self.file = file
-
         self.file_card = IconCard(self, self.file)
         # 有效期选择
-        self.nameLabel1 = QLabel('有效期:', self)
+        self.nameLabel1 = CaptionLabel('有效期:', self)
+        self.nameLabel1.pixelFontSize=15
         self.time_picker_box = QWidget(self)
         self.time_picker_layout = QHBoxLayout(self.time_picker_box)
         self.set_time = RadioButton('永久有效', self.time_picker_box)
@@ -36,7 +35,8 @@ class SharePage(FramelessWindow):
         self.time_picker_layout.addWidget(self.timePicker)
         self.time_picker_box.adjustSize()
         # 提取码选择
-        self.nameLabel2 = QLabel('提取码:', self)
+        self.nameLabel2 = CaptionLabel('提取码:', self)
+        self.nameLabel2.pixelFontSize=15
         self.pwd_box = QWidget(self)
         self.pwd_layout = QHBoxLayout(self.pwd_box)
         self.set_pwd = RadioButton('无需提取码', self.pwd_box)
@@ -64,6 +64,7 @@ class SharePage(FramelessWindow):
         self.setSlot()
 
     def initWindow(self):
+        self.setWindowIcon(QIcon(str(config.LOGO)))
         self.setWindowTitle("分享")
         self.resize(400, 400)
         self.vBoxLayout.setContentsMargins(30, self.titleBar.height(), 30, 30)
@@ -128,9 +129,10 @@ class SharePage(FramelessWindow):
         self.pwd_box.close()
         self.share_btn.close()
         link = f"{config.FILE_SHARE_GET}/{code}"
-        self.link_label = QLabel(
+        self.link_label = CaptionLabel(
             f"提取链接:{link}\n提取码:{pwd}\n有效时间到:{end_time}" if pwd != '' else f"提取链接:{link}\n有效时间到:{end_time}",
             self)
+        self.link_label.pixelFontSize=15
         self.link_label.setOpenExternalLinks(True)
         self.link_label.setTextInteractionFlags(Qt.TextSelectableByMouse)
         self.link_label.setContextMenuPolicy(Qt.NoContextMenu)

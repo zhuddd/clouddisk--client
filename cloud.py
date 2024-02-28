@@ -19,7 +19,7 @@ def catch_exception(exc_type, exc_value, tb):
     ErrorMessage = traceback.format_exception(exc_type, exc_value, tb)
     w = ErrorBox('Error', "".join(ErrorMessage))
     w.exec_()
-    app.quit()
+    QCoreApplication.quit()
 
 
 def is_admin():

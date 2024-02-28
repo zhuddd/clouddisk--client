@@ -54,9 +54,6 @@ UPDATE_PASSWORD_URL = BASE_URL + "/account/update_password"
 FILE_UPLOAD = BASE_URL + "/upload/upload"
 '''文件上传 URL 地址'''
 
-FILE_UPLOAD_CHECK = BASE_URL + "/upload/check"
-'''文件上传检查 URL 地址'''
-
 FILE_UPLOAD_DIR = BASE_URL + "/upload/creat_contents"
 '''文件上传目录创建 URL 地址'''
 

@@ -3,15 +3,15 @@ import re
 import requests
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QTimer
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout
 from qfluentwidgets import TreeWidget, PushButton
-from qfluentwidgets.components.widgets.frameless_window import FramelessWindow
 
 from app.Common import config, FileAction
 from app.Common.DataSaver import dataSaver
 from app.Common.FileAction import NewNameBox
-from app.Common.StyleSheet import StyleSheet
 from app.Common.Tost import error, success
+from app.components.IndependentWindow import IndependentWindow
 
 pattern = r"code=([^&]+)&pwd=([^/]*[^&]*)"
 
@@ -39,11 +39,10 @@ def byList(data: list) -> list[FolderList]:
     return r
 
 
-class SaveShare(FramelessWindow):
+class SaveShare(IndependentWindow):
 
-    def __init__(self, msg, parent=None):
-        super().__init__(parent=parent)
-        StyleSheet.SHARE.apply(self)
+    def __init__(self, msg):
+        super().__init__()
         self.folderList = None  # type: list[FolderList]
         matches = re.findall(pattern, msg)
         if matches:
@@ -157,6 +156,8 @@ class SaveShare(FramelessWindow):
 
     def initWindow(self):
         self.resize(400, 400)
+        self.setWindowIcon(QIcon(str(config.LOGO)))
+        self.setWindowTitle("保存分享")
 
 
 # if __name__ == '__main__':

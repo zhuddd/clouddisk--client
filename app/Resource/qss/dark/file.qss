@@ -3,14 +3,7 @@ QWidget {
     border: none;
     color: white;
 }
-QToolTip{
-    border-top-left-radius: 100px;
-    border-top-right-radius: 100px;
-    border-bottom-right-radius: 100px;
-    border-bottom-left-radius: 100px;
-    background-color: rgb(54, 60, 67);
-    color: white;
-}
+
 
 
 

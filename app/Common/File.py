@@ -1,7 +1,11 @@
+from app.Common.MyIcon import MyIcon
+
+
 class File:
     """
     文件类，用于存储文件信息
     """
+
     def __init__(self, data):
         self.id = data.get('Id')
         self.name = data.get('file_name')
@@ -12,7 +16,7 @@ class File:
         self.delete = data.get('is_delete')
         self.face = data.get('file_face')
         self.time = data.get('upload_time')
-        self.icon = data.get('icon')
+        self.icon = data.get('icon')  # type:MyIcon
         self.size = data.get('size')
         self.fid = data.get('fid')
 

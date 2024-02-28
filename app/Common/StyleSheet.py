@@ -17,7 +17,6 @@ class StyleSheet(StyleSheetBase, Enum):
     LOGIN = "login"
     REGISTER = "register"
     PAY = "pay"
-    SHARE = "share"
     HOME_TITLE_BAR = "home_title_bar"
 
     def path(self, theme=Theme.AUTO):

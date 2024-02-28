@@ -37,12 +37,12 @@ class UploadItem(QtWidgets.QWidget, UpDownItem):
         self.uploaded = 0
         self.size_last = 0
         self.total_size = 0
-        self.chunk_size = 1024 * 1024*100
+        self.chunk_size = 1024 * 1024 * 100
         self.chunk_hash = None
-        self.statu=Status.NOT_STARTED
+        self.statu = Status.NOT_STARTED
         self.manager = dataSaver.QNetworkAccessManager_cookies()
         self.manager.finished.connect(self.onfinish)
-        self.file=QFile(str(self.file_path))
+        self.file = QFile(str(self.file_path))
         self.timer = QTimer()
         self.timer.timeout.connect(self.update_upload_speed)
         self.init_btn()
@@ -53,6 +53,7 @@ class UploadItem(QtWidgets.QWidget, UpDownItem):
             self.info.setText("上传成功")
             return
         self.checkFile()
+
     def init_btn(self):
         self.progress.setMaximum(1000)
         self.name.setText(self.file_name)
@@ -107,21 +108,20 @@ class UploadItem(QtWidgets.QWidget, UpDownItem):
             return
         if self.start_byte is None:
             self.info.setText("正在查找断点")
-            self.reply=self.manager.post(self.newQNetworkRequest(), None)
+            self.reply = self.manager.post(self.newQNetworkRequest(), None)
             self.reply.uploadProgress.connect(self.uploadProgress)
         else:
             self.file.open(QFile.ReadOnly)
             self.file.seek(self.start_byte)
-            chunk=self.file.read(self.chunk_size)
+            chunk = self.file.read(self.chunk_size)
             self.file.close()
-            self.chunk_hash=get_file_hash_file(chunk)
-            self.reply=self.manager.post(self.newQNetworkRequest(), chunk)
+            self.chunk_hash = get_file_hash_file(chunk)
+            self.reply = self.manager.post(self.newQNetworkRequest(), chunk)
             self.reply.uploadProgress.connect(self.uploadProgress)
             if not self.timer.isActive():
                 self.timer.start(1000)
 
     def pause(self):
-        self
         if self.statu != Status.RUNNING:
             return
         if self.reply:
@@ -150,34 +150,34 @@ class UploadItem(QtWidgets.QWidget, UpDownItem):
         self.info.setText(f"{speed[0]} {speed[1]}/S")
 
     def uploadProgress(self, bytesSent, bytesTotal):
-        if self.total_size <=0:
+        if self.total_size <= 0:
             return
         self.uploaded = self.start_byte + bytesSent
         self.progress.setValue(int(self.uploaded / self.total_size * 1000))
         self.progres_text.setText(f"{self.uploaded / self.total_size:.2%}")
 
-    def onfinish(self, reply:QNetworkReply):
+    def onfinish(self, reply: QNetworkReply):
         self.timer.stop()
         if self.statu == Status.PAUSED:
             self.info.setText("已暂停")
             self.start_btn.show()
             self.stop_btn.hide()
             return
-        data=reply.readAll().data()
+        data = reply.readAll().data()
         if reply.error() == QNetworkReply.NoError:
-            data=json.loads(data)['data']
-            self.start_byte=data["upload_size"]
+            data = json.loads(data)['data']
+            self.start_byte = data["upload_size"]
             self.info.setText(data["message"])
             if data["next"]:
                 self.start()
             else:
                 self.timer.stop()
-                self.statu=Status.SUCCESS
+                self.statu = Status.SUCCESS
                 self.success.emit({"uid": self.uid, "path": str(self.file_path), "f_id": self.f_id})
                 self.close()
         else:
             try:
-                data=json.loads(data)
+                data = json.loads(data)
                 print(data)
                 self.info.setText(data["data"])
             except:
