@@ -9,7 +9,7 @@ from qfluentwidgets import FluentIcon
 
 from app.Common import config
 from app.Common.DataSaver import dataSaver
-from app.components.CloseMsgBox import CloseMsgBox
+from app.components.RadioMsgBox import RadioMsgBox
 from app.components.HomeTitleBar import HomeTitleBar
 from app.Common.pipe_msg import PipeMsg
 from app.Index.Verify import Verify
@@ -67,12 +67,21 @@ class Home(MSFluentWindow):
         self.fileInterface.filePath.connect(self.upLoadInterface.addTask)
         self.fileInterface.preview.connect(self.setFilePreviewPage)
         self.fileInterface.fileDownload.connect(self.downloadFile)
-        self.upLoadInterface.update.connect(self.fileInterface.updatePage)
+
         self.newTitleBar.searchSignal.connect(self.findFile)
+
         self.downLoadInterface.taskNum.connect(self.setDownloadTaskNum)
+        self.downLoadInterface.init()
+        self.upLoadInterface.update.connect(self.fileInterface.updatePage)
         self.upLoadInterface.taskNum.connect(self.setUploadTaskNum)
-        self.systemTray.showApp.connect(self.show)
+        self.upLoadInterface.init()
+
+        self.systemTray.showApp.connect(self.windowShow)
         self.systemTray.closeApp.connect(self.trayClose)
+
+    def windowShow(self):
+        self.show()
+        self.activateWindow()
 
     def findFile(self, fileName):
         self.fileInterface.addInterface(f"搜索:{fileName}", fileName)
@@ -114,6 +123,7 @@ class Home(MSFluentWindow):
         self.stackedWidget.setCurrentWidget(self.PreviewPage)
 
     def setUploadTaskNum(self, num: int):
+        print(num)
         if self.upload_num is None:
             item = self.navigationInterface.widget(self.upLoadInterface.objectName())
             self.upload_num = InfoBadge.attension(
@@ -192,12 +202,16 @@ class Home(MSFluentWindow):
         if self.fileInterface.sharePage is not None:
             self.fileInterface.sharePage.close()
             self.fileInterface.sharePage = None
-        w = CloseMsgBox(self)
+        w = RadioMsgBox(title="您确定要退出吗？",
+                        radios=['最小化到托盘', '退出'],
+                        parent=self)
         if w.exec():
-            if w.isquit():
+            if w.isquit() == 1:
+                self.pipe.stop()
                 super().close()
             else:
                 self.hide()
 
     def trayClose(self):
+        self.pipe.stop()
         super().close()

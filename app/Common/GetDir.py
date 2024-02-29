@@ -75,3 +75,4 @@ class GetDir(QThread):
         for f in file_list:
             f.icon = MyIcon(f.type)
             self.update.emit(f)
+

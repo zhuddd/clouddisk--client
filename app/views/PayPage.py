@@ -16,11 +16,16 @@ from app.Common.config import PAY_MENU, PAY_INFO, PAY_PAY, PAY_SUCCESS, cfg
 
 
 def getMenu():
-    req = requests.get(PAY_MENU, cookies=dataSaver.get("cookies"))
-    datas = req.json()['data']
-    if req.status_code != 200:
+    try:
+        req = requests.get(PAY_MENU, cookies=dataSaver.get("cookies"))
+        datas = req.json()['data']
+
+        if req.status_code != 200:
+            return []
+        return [Menu(i) for i in datas]
+    except Exception as e:
+        print(e)
         return []
-    return [Menu(i) for i in datas]
 
 
 def markdown_to_html(markdown_text, dark_mode=False):

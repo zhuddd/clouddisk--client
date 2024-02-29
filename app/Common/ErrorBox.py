@@ -1,8 +1,5 @@
-import sys
-
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout
-from qfluentwidgets import MessageBoxBase, SubtitleLabel, LineEdit, Dialog
+from qfluentwidgets import  Dialog
 
 
 class ErrorBox(Dialog):

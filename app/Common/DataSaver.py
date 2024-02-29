@@ -1,4 +1,3 @@
-from PyQt5.QtCore import QByteArray
 from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkCookieJar, QNetworkCookie
 from requests.cookies import RequestsCookieJar
 

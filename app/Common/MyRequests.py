@@ -43,3 +43,5 @@ class MyRequestThread(requests.Session, QThread):
             print("MyRequestThread run", e)
             self.error.emit({"message": str(e).split(":")[-1]})
 
+
+

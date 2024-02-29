@@ -5,7 +5,7 @@ from uuid import uuid1
 from PyQt5 import QtCore, QtWidgets, QtNetwork
 from PyQt5.QtCore import QTimer, QUrl
 from PyQt5.QtNetwork import QNetworkRequest
-from qfluentwidgets import FluentIcon
+from qfluentwidgets import FluentIcon, SpinBox, Action
 
 from app.Common.DataSaver import dataSaver
 from app.Common.Status import Status
@@ -14,6 +14,7 @@ from app.Common.Tost import error
 from app.Common.config import cfg, FILE_DOWNLOAD_TREE
 from app.Ui.UpDown import UpDown
 from app.components.DownloadItem import DownloadItem
+from app.components.RadioMsgBox import RadioMsgBox
 
 
 class DownloadPage(QtWidgets.QWidget, UpDown):
@@ -30,21 +31,40 @@ class DownloadPage(QtWidgets.QWidget, UpDown):
         self.task_success = []
         self.downloadItems = {}  # type:dict[str,DownloadItem]
 
+        self.max_thread = SpinBox(self.widget)
         self.max_thread.setValue(dataSaver.get("download_max_thread", 5))
         self.max_thread.valueChanged.connect(lambda x: dataSaver.set("download_max_thread", x))
-        self.toolBox.addItem(routeKey="Play", onClick=self.allRun, icon=FluentIcon.PLAY_SOLID)
-        self.toolBox.addItem(routeKey="Stop", onClick=self.allStop, icon=FluentIcon.PAUSE_BOLD)
-        self.toolBox.setCurrentItem("Play")
+        self.commandBar.addWidget(self.max_thread)
+        self.all_run = self.commandBar.addAction(Action(FluentIcon.PLAY, '全部开始', triggered=self.allRun))
+        self.all_stop = self.commandBar.addAction(Action(FluentIcon.PAUSE, '全部暂停', triggered=self.allStop))
+        self.commandBar.addAction(Action(FluentIcon.DELETE, '清空', triggered=self.clear))
 
         self.manager = dataSaver.QNetworkAccessManager_cookies()
         self.manager.finished.connect(self.getTreefinlish)
         self.circulate = QTimer()
         self.circulate.timeout.connect(self.start)
+
+    def init(self):
         self.get_history()
         self.allRun()
 
+    def clear(self):
+        box = RadioMsgBox(title="清空",
+                          radios=["仅清空已完成", "全部清空"],
+                          parent=self)
+        if box.exec():
+            if box.isquit() == 0:
+                for i in self.downloadItems.values():
+                    if i.statu == Status.SUCCESS:
+                        i.close_download()
+            else:
+                for i in self.downloadItems.values():
+                    i.close_download()
+
     def allRun(self):
         self._run = True
+        self.all_run.setEnabled(False)
+        self.all_stop.setEnabled(True)
         for i in self.task_wait:
             uid = i["uid"]
             if self.downloadItems[uid].statu in (Status.WAITING, Status.NOT_STARTED, Status.PAUSED, Status.ERROR):
@@ -52,11 +72,13 @@ class DownloadPage(QtWidgets.QWidget, UpDown):
         self.circulate.start(1000)
 
     def allStop(self):
+        self.all_run.setEnabled(True)
+        self.all_stop.setEnabled(False)
+        self._run = False
         for i in self.task_wait:
             uid = i["uid"]
             if self.downloadItems[uid].statu in (Status.RUNNING, Status.WAITING):
                 self.downloadItems[uid].pause()
-        self._run = False
         self.circulate.stop()
 
     def start(self):
@@ -136,20 +158,16 @@ class DownloadPage(QtWidgets.QWidget, UpDown):
         for i in task_success:
             self.create_download_item(i, True)
 
-    def delete_history(self, data: dict, all=False):
-        if all:
-            self.task_wait = []
-            self.task_success = []
-        else:
-            uid = data["uid"]
-            for i in range(len(self.task_wait)):
-                if self.task_wait[i]["uid"] == uid:
-                    self.task_wait.pop(i)
-                    break
-            for i in range(len(self.task_success)):
-                if self.task_success[i]["uid"] == uid:
-                    self.task_success.pop(i)
-                    break
+    def delete_history(self, data: dict):
+        uid = data["uid"]
+        for i in range(len(self.task_wait)):
+            if self.task_wait[i]["uid"] == uid:
+                self.task_wait.pop(i)
+                break
+        for i in range(len(self.task_success)):
+            if self.task_success[i]["uid"] == uid:
+                self.task_success.pop(i)
+                break
         self.save_history()
 
     def set_success(self, data: dict):

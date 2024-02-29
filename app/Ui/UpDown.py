@@ -10,25 +10,25 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+from app.Common.commandbarR import CommandBarR
+
 
 class UpDown(object):
     def setupUi(self, Ui):
         self.verticalLayout = QtWidgets.QVBoxLayout(Ui)
         self.widget = QtWidgets.QWidget(Ui)
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.widget)
-        spacerItem = QtWidgets.QSpacerItem(666666666, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout.addItem(spacerItem)
-        self.max_thread = CompactSpinBox(self.widget)
-        self.horizontalLayout.addWidget(self.max_thread)
-        self.toolBox = SegmentedToggleToolWidget(self.widget)
-        self.toolBox.setMinimumSize(QtCore.QSize(150, 32))
-        self.toolBox.setLayoutDirection(QtCore.Qt.RightToLeft)
-        self.horizontalLayout.addWidget(self.toolBox)
+        # spacerItem = QtWidgets.QSpacerItem(666666666, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        # self.horizontalLayout.addItem(spacerItem)
+        self.commandBar = CommandBarR(self.widget)
+        self.horizontalLayout.addWidget(self.commandBar)
+
         self.verticalLayout.addWidget(self.widget)
         self.SmoothScrollArea = SmoothScrollArea(Ui)
         self.SmoothScrollArea.setFrameShape(QtWidgets.QFrame.NoFrame)
         self.SmoothScrollArea.setWidgetResizable(True)
         self.SmoothScrollArea.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+
         self.box = QtWidgets.QWidget()
         self.box.setGeometry(QtCore.QRect(0, 0, 477, 380))
         self.box_layout = QtWidgets.QVBoxLayout(self.box)
@@ -52,4 +52,4 @@ class UpDown(object):
     def retranslateUi(self, Ui):
         _translate = QtCore.QCoreApplication.translate
         Ui.setWindowTitle(_translate("Ui", "Form"))
-from qfluentwidgets import CompactSpinBox, SegmentedToggleToolWidget, SmoothScrollArea
+from qfluentwidgets import SmoothScrollArea

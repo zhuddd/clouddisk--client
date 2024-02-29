@@ -51,6 +51,7 @@ class UploadItem(QtWidgets.QWidget, UpDownItem):
             self.progress.setValue(1000)
             self.progres_text.setText("100%")
             self.info.setText("上传成功")
+            self.statu = Status.SUCCESS
             return
         self.checkFile()
 

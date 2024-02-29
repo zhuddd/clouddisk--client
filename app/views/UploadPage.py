@@ -3,7 +3,7 @@ import json
 from PyQt5 import QtCore, QtWidgets, QtNetwork
 from PyQt5.QtCore import QTimer, QUrl
 from PyQt5.QtNetwork import QNetworkRequest
-from qfluentwidgets import FluentIcon
+from qfluentwidgets import FluentIcon, Action, SpinBox
 
 from app.Common.DataSaver import dataSaver
 from app.Common.MyFile import create_tree
@@ -12,6 +12,7 @@ from app.Common.StyleSheet import StyleSheet
 from app.Common.Tost import error
 from app.Common.config import FILE_UPLOAD_DIR
 from app.Ui.UpDown import UpDown
+from app.components.RadioMsgBox import RadioMsgBox
 from app.components.UploadItem import UploadItem
 
 
@@ -31,21 +32,40 @@ class UploadPage(QtWidgets.QWidget, UpDown):
         self.task_success = []
         self.uploadItems = {}  # type:dict[str,UploadItem]
 
+        self.max_thread = SpinBox(self.widget)
         self.max_thread.setValue(dataSaver.get("upload_max_thread", 5))
         self.max_thread.valueChanged.connect(lambda x: dataSaver.set("upload_max_thread", x))
-        self.toolBox.addItem(routeKey="Play", onClick=self.allRun, icon=FluentIcon.PLAY_SOLID)
-        self.toolBox.addItem(routeKey="Stop", onClick=self.allStop, icon=FluentIcon.PAUSE_BOLD)
-        self.toolBox.setCurrentItem("Play")
+        self.commandBar.addWidget(self.max_thread)
+        self.all_run = self.commandBar.addAction(Action(FluentIcon.PLAY, '全部开始', triggered=self.allRun))
+        self.all_stop = self.commandBar.addAction(Action(FluentIcon.PAUSE, '全部暂停', triggered=self.allStop))
+        self.commandBar.addAction(Action(FluentIcon.DELETE, '清空', triggered=self.clear))
 
         self.manager = dataSaver.QNetworkAccessManager_cookies()
         self.manager.finished.connect(self.setTreefinlish)
         self.circulate = QTimer()
         self.circulate.timeout.connect(self.start)
+
+    def init(self):
         self.get_history()
         self.allRun()
 
+    def clear(self):
+        box=RadioMsgBox(title="清空",
+                        radios=["仅清空已完成", "全部清空"],
+                        parent=self)
+        if box.exec():
+            if box.isquit() == 0:
+                for i in self.uploadItems.values():
+                    if i.statu==Status.SUCCESS:
+                        i.close_upload()
+            else:
+                for i in self.uploadItems.values():
+                    i.close_upload()
+
     def allRun(self):
         self._run = True
+        self.all_run.setEnabled(False)
+        self.all_stop.setEnabled(True)
         for i in self.task_wait:
             uid = i["uid"]
             if self.uploadItems[uid].statu in (Status.WAITING, Status.NOT_STARTED, Status.PAUSED, Status.ERROR):
@@ -53,11 +73,13 @@ class UploadPage(QtWidgets.QWidget, UpDown):
         self.circulate.start(1000)
 
     def allStop(self):
+        self._run = False
+        self.all_run.setEnabled(True)
+        self.all_stop.setEnabled(False)
         for i in self.task_wait:
             uid = i["uid"]
             if self.uploadItems[uid].statu in (Status.RUNNING, Status.WAITING):
                 self.uploadItems[uid].pause()
-        self._run = False
         self.circulate.stop()
 
     def start(self):
@@ -98,10 +120,10 @@ class UploadPage(QtWidgets.QWidget, UpDown):
     def init_task_list(self, new_list):
         r = []
         for i in new_list.keys():
-            path=self.path_list.pop(i,None)
+            path = self.path_list.pop(i, None)
             if path is None:
                 continue
-            fid=new_list.get(i)
+            fid = new_list.get(i)
             r.append({"uid": i, "path": path, "f_id": fid})
         return r
 
@@ -137,20 +159,16 @@ class UploadPage(QtWidgets.QWidget, UpDown):
         for i in task_success:
             self.create_upload_item(i, True)
 
-    def delete_history(self, data: dict, all=False):
-        if all:
-            self.task_wait = []
-            self.task_success = []
-        else:
-            uid = data["uid"]
-            for i in range(len(self.task_wait)):
-                if self.task_wait[i]["uid"] == uid:
-                    self.task_wait.pop(i)
-                    break
-            for i in range(len(self.task_success)):
-                if self.task_success[i]["uid"] == uid:
-                    self.task_success.pop(i)
-                    break
+    def delete_history(self, data: dict = None):
+        uid = data["uid"]
+        for i in range(len(self.task_wait)):
+            if self.task_wait[i]["uid"] == uid:
+                self.task_wait.pop(i)
+                break
+        for i in range(len(self.task_success)):
+            if self.task_success[i]["uid"] == uid:
+                self.task_success.pop(i)
+                break
         self.save_history()
 
     def set_success(self, data: dict):

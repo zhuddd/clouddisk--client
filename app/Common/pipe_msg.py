@@ -28,12 +28,17 @@ class PipeMsg(QThread):
 
     def start_server(self):
         while True:
-            pipe = self.create_named_pipe()
-            win32pipe.ConnectNamedPipe(pipe, None)
-            data = self.read_from_pipe(pipe)
+            self.pipe = self.create_named_pipe()
+            win32pipe.ConnectNamedPipe(self.pipe, None)
+            data = self.read_from_pipe(self.pipe)
             self.msg.emit(data)
 
     def read_from_pipe(self, pipe):
         buffer_size = 1024
         data = win32file.ReadFile(pipe, buffer_size)[1].decode('utf-8')
         return data
+
+    def stop(self):
+        self.terminate()
+
+

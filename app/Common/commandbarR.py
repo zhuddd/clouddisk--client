@@ -11,16 +11,30 @@ class CommandBarR(CommandBar):
         self.moreButton.hide()
 
         visibles = self._visibleWidgets()
+        if self.suitableWidth() <= self.width():
+            x = self.width() - self.contentsMargins().right() - self.suitableWidth()
+        else:
+            w = self.moreButton.width()
+            for index, widget in enumerate(self._widgets):
+                w += widget.width()
+                if index > 0:
+                    w += self.spacing()
+
+                if w > self.width():
+                    w -= widget.width()
+                    break
+            x = self.width() - w - self.contentsMargins().right()
         h = self.height()
-        w = self.width() - visibles[0].width() if visibles else self.width()
+
         for widget in visibles:
             widget.show()
-            widget.move(w, (h - widget.height()) // 2)
-            w -= (widget.width() + self.spacing())
+            widget.move(x, (h - widget.height()) // 2)
+            x += (widget.width() + self.spacing())
 
+        # show more actions button
         if self._hiddenActions or len(visibles) < len(self._widgets):
             self.moreButton.show()
-            self.moreButton.move(w, (h - self.moreButton.height()) // 2)
+            self.moreButton.move(x, (h - self.moreButton.height()) // 2)
 
         for widget in self._widgets[len(visibles):]:
             widget.hide()

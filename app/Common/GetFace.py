@@ -54,3 +54,4 @@ class GetFace(QThread):
             self.signal.emit(d.content)
         else:
             faceTmp.setface(self.fid, None)
+
