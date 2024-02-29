@@ -11,7 +11,7 @@ from PyQt5.QtWidgets import QApplication
 from qfluentwidgets import FluentTranslator
 
 from app.Common.ErrorBox import ErrorBox
-from app.Common.config import cfg
+from app.Common.config import cfg, Config, BASE_DIR
 from app.Index.Verify import Verify
 
 
@@ -30,7 +30,7 @@ def is_admin():
 
 
 def open_app_path():
-    return str(Path(sys.argv[0]).resolve().parent / 'open.exe')
+    return f"{BASE_DIR}\open.bat"
 
 
 def create_registry_entry():

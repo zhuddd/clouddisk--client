@@ -10,7 +10,7 @@ cloud.py 主程序人口
 
 `nuitka --standalone --mingw64 --show-progress --nofollow-imports --plugin-enable=pyqt5 --follow-import-to=app --output-dir=../out/dev cloud.py`
 
-`nuitka --standalone --windows-disable-console --mingw64 --nofollow-imports --show-progress --plugin-enable=pyqt5 --follow-import-to=app --output-dir=../out/r cloud.py`
+`nuitka --standalone --windows-disable-console --mingw64 --nofollow-imports --show-progress --plugin-enable=pyqt5 --follow-import-to=app --output-dir=../out/r --windows-icon-from-ico=./app/Resource/logo.ico cloud.py`
 
 ### 打包命令(完整包) open.py
 

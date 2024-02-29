@@ -21,17 +21,12 @@ class Config(QConfig):
     checkUpdateAtStartUp = ConfigItem("Update", "CheckUpdateAtStartUp", True, BoolValidator())
 
 
-cfg = Config()
-cfg.themeMode.value = Theme.AUTO
-qconfig.load('config/config.json', cfg)
-
-BASE_DIR = Path(__file__).resolve().parent.parent
-
+BASE_DIR = Path.cwd()
 DAT_PATH = BASE_DIR / "dat"
-STYLE_FILE_PATH = BASE_DIR / "Resource" / "qss"
-ICON_PATH = BASE_DIR / "Resource" / "images"
-TEMP_PATH = BASE_DIR / "temp"
-LOGO = BASE_DIR / "Resource" / "logo.svg"
+STYLE_FILE_PATH = BASE_DIR / "app" / "Resource" / "qss"
+ICON_PATH = BASE_DIR / "app" / "Resource" / "images"
+LOGO = BASE_DIR / "app" / "Resource" / "logo.svg"
+CONFIG = BASE_DIR / "config" / "config.json"
 
 # BASE_URL = "http://127.0.0.1"
 # BASE_URL = "http://110.40.174.23"
@@ -119,3 +114,7 @@ PAY_PAY = BASE_URL + "/pay/pay"
 
 PAY_SUCCESS = BASE_URL + "/pay/paysuccess"
 '''支付验证 URL 地址'''
+
+cfg = Config()
+cfg.themeMode.value = Theme.AUTO
+qconfig.load(CONFIG, cfg)

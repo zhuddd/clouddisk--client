@@ -96,6 +96,7 @@ class Home(MSFluentWindow):
             self.save_share.close()
             self.save_share = None
         self.save_share = SaveShare(msg)
+        self.windowShow()
         self.save_share.show()
 
     def initNavigation(self):
@@ -123,7 +124,6 @@ class Home(MSFluentWindow):
         self.stackedWidget.setCurrentWidget(self.PreviewPage)
 
     def setUploadTaskNum(self, num: int):
-        print(num)
         if self.upload_num is None:
             item = self.navigationInterface.widget(self.upLoadInterface.objectName())
             self.upload_num = InfoBadge.attension(
