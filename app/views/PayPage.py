@@ -332,6 +332,7 @@ class PayPage(QFrame):
         if self.remainderTime <= 0:
             self.remainder.stop()
             self.remainder.deleteLater()
+            self.remainder = None
 
     def on_page_changed(self, index):
         if index == 0:

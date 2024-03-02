@@ -31,61 +31,61 @@ CONFIG = BASE_DIR / "config" / "config.json"
 # BASE_URL = "http://127.0.0.1"
 # BASE_URL = "http://110.40.174.23"
 
-BASE_URL = "http://api.cloud.zhuddd.icu"
+BASE_URL = "http://cloud.zhuddd.icu"
 '''定义基础 URL 地址'''
 
-LOGIN_URL = BASE_URL + "/account/login"
+LOGIN_URL = BASE_URL + "/api/account/login"
 '''登录 URL 地址'''
 
-REGISTER_URL = BASE_URL + "/account/register"
+REGISTER_URL = BASE_URL + "/api/account/register"
 '''注册 URL 地址'''
 
-CAPTCHA_URL = BASE_URL + "/account/captcha"
+CAPTCHA_URL = BASE_URL + "/api/account/captcha"
 '''获取验证码 URL 地址'''
 
-UPDATE_PASSWORD_URL = BASE_URL + "/account/update_password"
+UPDATE_PASSWORD_URL = BASE_URL + "/api/account/update_password"
 '''更新密码 URL 地址'''
 
-FILE_UPLOAD = BASE_URL + "/upload/upload"
+FILE_UPLOAD = BASE_URL + "/api/upload/upload"
 '''文件上传 URL 地址'''
 
-FILE_UPLOAD_DIR = BASE_URL + "/upload/creat_contents"
+FILE_UPLOAD_DIR = BASE_URL + "/api/upload/creat_contents"
 '''文件上传目录创建 URL 地址'''
 
-FILE_DOWNLOAD = BASE_URL + "/download/download"
+FILE_DOWNLOAD = BASE_URL + "/api/download/download"
 '''文件下载 URL 地址'''
 
-FILE_DOWNLOAD_TREE = BASE_URL + "/download/tree"
+FILE_DOWNLOAD_TREE = BASE_URL + "/api/download/tree"
 '''文件下载目录树 URL 地址'''
 
-FILE_USED = BASE_URL + "/file/used"
+FILE_USED = BASE_URL + "/api/file/used"
 '''容量使用情况 URL 地址'''
 
-FILE_DIR = BASE_URL + "/file/filedir"
+FILE_DIR = BASE_URL + "/api/file/filedir"
 '''文件目录 URL 地址'''
 
-FILE_FOLDER_LIST = BASE_URL + "/file/folderlist"
+FILE_FOLDER_LIST = BASE_URL + "/api/file/folderlist"
 '''文件夹列表 URL 地址'''
 
-FILE_FACE = BASE_URL + "/file/face"
+FILE_FACE = BASE_URL + "/api/file/face"
 '''获取封面 URL 地址'''
 
-FILE_DELETE = BASE_URL + "/file/delete"
+FILE_DELETE = BASE_URL + "/api/file/delete"
 '''文件删除 URL 地址'''
 
-FILE_RENAME = BASE_URL + "/file/rename"
+FILE_RENAME = BASE_URL + "/api/file/rename"
 '''文件重命名 URL 地址'''
 
-FILE_PASTE = BASE_URL + "/file/paste"
+FILE_PASTE = BASE_URL + "/api/file/paste"
 '''文件粘贴 URL 地址'''
 
-FILE_NEWFOLDER = BASE_URL + "/file/newfolder"
+FILE_NEWFOLDER = BASE_URL + "/api/file/newfolder"
 '''新建文件夹 URL 地址'''
 
-FILE_PREVIEW = BASE_URL + "/file/preview"
+FILE_PREVIEW = BASE_URL + "/preview"
 '''文件预览 URL 地址'''
 
-FILE_GET_KEY = BASE_URL + "/file/getkey"
+FILE_GET_KEY = BASE_URL + "/api/file/getkey"
 '''获取文件预览密钥 URL 地址'''
 
 FILE_SHARE_NEW = BASE_URL + "/share/new"
@@ -103,16 +103,16 @@ FILE_SHARE_LIST = BASE_URL + "/share/list"
 FILE_SHARE_DEL = BASE_URL + "/share/delete"
 '''删除分享文件 URL 地址'''
 
-PAY_MENU = BASE_URL + "/pay/menu"
+PAY_MENU = BASE_URL + "/api/pay/menu"
 '''订阅列表 URL 地址'''
 
-PAY_INFO = BASE_URL + "/pay/info"
+PAY_INFO = BASE_URL + "/api/pay/info"
 '''订阅包详情 URL 地址'''
 
-PAY_PAY = BASE_URL + "/pay/pay"
+PAY_PAY = BASE_URL + "/api/pay/pay"
 '''支付 URL 地址'''
 
-PAY_SUCCESS = BASE_URL + "/pay/paysuccess"
+PAY_SUCCESS = BASE_URL + "/api/pay/paysuccess"
 '''支付验证 URL 地址'''
 
 cfg = Config()

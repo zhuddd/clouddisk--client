@@ -125,6 +125,8 @@ class Home(MSFluentWindow):
 
     def setUploadTaskNum(self, num: int):
         if self.upload_num is None:
+            if num<=0:
+                return
             item = self.navigationInterface.widget(self.upLoadInterface.objectName())
             self.upload_num = InfoBadge.attension(
                 text=num,
@@ -132,7 +134,6 @@ class Home(MSFluentWindow):
                 target=item,
                 position=InfoBadgePosition.NAVIGATION_ITEM
             )
-            return
         if num <= 0:
             self.upload_num.hide()
         else:
@@ -142,6 +143,8 @@ class Home(MSFluentWindow):
 
     def setDownloadTaskNum(self, num: int):
         if self.download_num is None:
+            if num<=0:
+                return
             item = self.navigationInterface.widget(self.downLoadInterface.objectName())
             self.download_num = InfoBadge.attension(
                 text=num,
@@ -149,7 +152,6 @@ class Home(MSFluentWindow):
                 target=item,
                 position=InfoBadgePosition.NAVIGATION_ITEM
             )
-            return
         if num <= 0:
             self.download_num.hide()
         else:
