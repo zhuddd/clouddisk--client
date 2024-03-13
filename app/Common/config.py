@@ -1,8 +1,10 @@
+import sys
 from pathlib import Path
 
 from qfluentwidgets import (qconfig, QConfig, ConfigItem, OptionsConfigItem, BoolValidator,
                             OptionsValidator, Theme, FolderValidator)
-
+def isWin11():
+    return sys.platform == 'win32' and sys.getwindowsversion().build >= 22000
 
 def DownloadDir():
     import winreg

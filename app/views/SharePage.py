@@ -21,7 +21,7 @@ class SharePage(IndependentWindow):
         self.file_card = IconCard(self, self.file)
         # 有效期选择
         self.nameLabel1 = CaptionLabel('有效期:', self)
-        self.nameLabel1.pixelFontSize=15
+        self.nameLabel1.pixelFontSize = 15
         self.time_picker_box = QWidget(self)
         self.time_picker_layout = QHBoxLayout(self.time_picker_box)
         self.set_time = RadioButton('永久有效', self.time_picker_box)
@@ -36,7 +36,7 @@ class SharePage(IndependentWindow):
         self.time_picker_box.adjustSize()
         # 提取码选择
         self.nameLabel2 = CaptionLabel('提取码:', self)
-        self.nameLabel2.pixelFontSize=15
+        self.nameLabel2.pixelFontSize = 15
         self.pwd_box = QWidget(self)
         self.pwd_layout = QHBoxLayout(self.pwd_box)
         self.set_pwd = RadioButton('无需提取码', self.pwd_box)
@@ -129,14 +129,16 @@ class SharePage(IndependentWindow):
         self.pwd_box.close()
         self.share_btn.close()
         link = f"{config.FILE_SHARE_GET}/{code}"
-        self.link_label = CaptionLabel(
-            f"提取链接:{link}\n提取码:{pwd}\n有效时间到:{end_time}" if pwd != '' else f"提取链接:{link}\n有效时间到:{end_time}",
-            self)
-        self.link_label.pixelFontSize=15
+        text = f"文件:{self.file.name}\n"
+        text += f"提取链接:{link}\n"
+        text += f"提取码:{pwd}\n" if pwd else "无需提取码\n"
+        text += f"有效期:{end_time}" if end_time else "永久有效"
+        self.link_label = CaptionLabel(text, self)
+        self.link_label.pixelFontSize = 15
         self.link_label.setOpenExternalLinks(True)
         self.link_label.setTextInteractionFlags(Qt.TextSelectableByMouse)
         self.link_label.setContextMenuPolicy(Qt.NoContextMenu)
-        self.copy_btn = PushButton("复制", self)
+        self.copy_btn = PushButton("复制分享链接", self)
         self.copy_btn.clicked.connect(lambda: self.copyLink(link))
         self.vBoxLayout.addWidget(self.link_label)
         self.vBoxLayout.addWidget(self.copy_btn)

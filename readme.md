@@ -22,3 +22,5 @@ cloud.py 主程序人口
 ### 打包命令(仅exe)
 
 `nuitka --mingw --windows-disable-console --output-dir=../out xxx.py`
+
+`nuitka --windows-disable-console --mingw64 --nofollow-imports --show-progress --plugin-enable=pyqt5 --follow-import-to=app --output-dir=../out/r --windows-icon-from-ico=./app/Resource/logo.ico cloud.py`

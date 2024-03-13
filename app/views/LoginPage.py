@@ -4,7 +4,6 @@ from PyQt5.QtWidgets import QCompleter
 from qfluentwidgets import PushButton, PasswordLineEdit, LineEdit
 from requests.utils import dict_from_cookiejar
 
-
 from app.Common.DataSaver import dataSaver
 from app.Common.StyleSheet import StyleSheet
 from app.Common.Tost import success, error
@@ -12,7 +11,6 @@ from app.Common.config import LOGIN_URL
 import hashlib
 
 from app.Common.MyRequests import MyRequestThread
-
 
 
 class LoginPage(QtWidgets.QWidget):
@@ -23,7 +21,7 @@ class LoginPage(QtWidgets.QWidget):
         super().__init__(*args, **kwargs)
         self.setObjectName("loginPage")
         self.gridLayout = QtWidgets.QGridLayout(self)
-        self.pushbutton = PushButton("登录",self)
+        self.pushbutton = PushButton("登录", self)
         self.gridLayout.addWidget(self.pushbutton, 2, 1, 1, 1)
         self.email = LineEdit(self)
         self.email.setPlaceholderText("邮箱")
@@ -45,7 +43,6 @@ class LoginPage(QtWidgets.QWidget):
         self.pushbutton.clicked.connect(self.login)
         self.fogetPassword.clicked.connect(self.forget.emit)
         self.request = None
-        self.loginBySession()
 
     def loginBySession(self):
         try:
@@ -116,5 +113,3 @@ class LoginPage(QtWidgets.QWidget):
         except Exception as e:
             print("responseData", response, e)
             error(self, "网络异常")
-
-

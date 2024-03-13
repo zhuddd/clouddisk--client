@@ -32,6 +32,8 @@ class ShareListPage(QWidget):
         self.tableView.setHorizontalHeaderLabels(['文件名', '文件类型', '分享日期', '结束日期', '分享码', '提取码'])
         self.tableView.resizeColumnsToContents()
         self.tableView.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        # for i in range(5):
+        #     self.tableView.horizontalHeader().setSectionResizeMode(i, QHeaderView.Interactive)
         self.tableView.setSortingEnabled(True)
 
         self.vBoxLayout.setContentsMargins(0, 0, 0, 0)
@@ -39,7 +41,7 @@ class ShareListPage(QWidget):
         self.vBoxLayout.addWidget(self.tableView)
 
         self.initAction()
-        self.updateList()
+        # self.updateList()
 
     def initAction(self):
         self.update_action = Action(FluentIcon.SYNC, self.tr('刷新'))

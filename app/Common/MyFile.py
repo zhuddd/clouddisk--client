@@ -1,3 +1,4 @@
+import atexit
 from uuid import uuid1
 from pathlib import Path
 
@@ -16,9 +17,11 @@ class CheckFile(QThread):
     def __init__(self, path, *args, **kwargs):
         super(CheckFile, self).__init__(*args, **kwargs)
         self.path = path
+        atexit.register(self.terminate)
 
     def run(self):
-        self.hashes.emit(get_file_hash(self.path))
+        data=get_file_hash(self.path)
+        self.hashes.emit(data)
 
 
 

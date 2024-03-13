@@ -1,11 +1,8 @@
-import sys
+
 
 from qfluentwidgets import MSFluentTitleBar, isDarkTheme,  qconfig
 
-
-def isWin11():
-    return sys.platform == 'win32' and sys.getwindowsversion().build >= 22000
-
+from app.Common.config import isWin11
 
 if isWin11():
     from qframelesswindow import AcrylicWindow as Window

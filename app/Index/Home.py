@@ -9,6 +9,7 @@ from qfluentwidgets import FluentIcon
 
 from app.Common import config
 from app.Common.DataSaver import dataSaver
+from app.Common.StyleSheet import StyleSheet
 from app.components.RadioMsgBox import RadioMsgBox
 from app.components.HomeTitleBar import HomeTitleBar
 from app.Common.pipe_msg import PipeMsg
@@ -47,8 +48,9 @@ class Home(MSFluentWindow):
         self.settingInterface = Setting(self)
         self.userInterface = NavigationBarPushButton(
             FluentIcon.ROBOT,
-            dataSaver.get('user', 'name') if len(dataSaver.get('user', 'name')) < 5 else dataSaver.get('user', 'name')[
-                                                                                         :5] + '...',
+            dataSaver.get('user', 'name')
+            if len(dataSaver.get('user', 'name')) < 5 else
+            dataSaver.get('user', 'name')[:5] + '...',
             isSelectable=False,
             parent=self
         )
@@ -56,12 +58,22 @@ class Home(MSFluentWindow):
         self.initWindow()
         self.initNavigation()
         self.setSlot()
-        self.init_pipe()
 
     def init_pipe(self):
         self.pipe = PipeMsg(self)
         self.pipe.msg.connect(self.saveShare)
         self.pipe.start()
+
+    def init_page(self):
+        self.fileInterface.getDir.get_dir(0)
+        self.ShareListInterface.updateList()
+        self.downLoadInterface.init()
+        self.upLoadInterface.init()
+        self.userInterface.setText(
+            dataSaver.get('user', 'name')
+            if len(dataSaver.get('user', 'name')) < 5 else
+            dataSaver.get('user', 'name')[:5] + '...')
+        self.init_pipe()
 
     def setSlot(self):
         self.fileInterface.filePath.connect(self.upLoadInterface.addTask)
@@ -71,10 +83,8 @@ class Home(MSFluentWindow):
         self.newTitleBar.searchSignal.connect(self.findFile)
 
         self.downLoadInterface.taskNum.connect(self.setDownloadTaskNum)
-        self.downLoadInterface.init()
         self.upLoadInterface.update.connect(self.fileInterface.updatePage)
         self.upLoadInterface.taskNum.connect(self.setUploadTaskNum)
-        self.upLoadInterface.init()
 
         self.systemTray.showApp.connect(self.windowShow)
         self.systemTray.closeApp.connect(self.trayClose)
@@ -125,7 +135,7 @@ class Home(MSFluentWindow):
 
     def setUploadTaskNum(self, num: int):
         if self.upload_num is None:
-            if num<=0:
+            if num <= 0:
                 return
             item = self.navigationInterface.widget(self.upLoadInterface.objectName())
             self.upload_num = InfoBadge.attension(
@@ -143,7 +153,7 @@ class Home(MSFluentWindow):
 
     def setDownloadTaskNum(self, num: int):
         if self.download_num is None:
-            if num<=0:
+            if num <= 0:
                 return
             item = self.navigationInterface.widget(self.downLoadInterface.objectName())
             self.download_num = InfoBadge.attension(
@@ -161,6 +171,7 @@ class Home(MSFluentWindow):
 
     def initWindow(self):
         self.resize(900, 700)
+        self.setMinimumSize(900, 700)
         self.newTitleBar = HomeTitleBar(self)
         self.setTitleBar(self.newTitleBar)
         self.titleBar.setAttribute(Qt.WA_StyledBackground)
@@ -186,7 +197,7 @@ class Home(MSFluentWindow):
         dataSaver.set("cookies", None)
         self.verify = Verify()
         self.verify.show()
-        self.close()
+        super().close()
 
     def full(self, e):
         if e:

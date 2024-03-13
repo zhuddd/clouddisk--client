@@ -1,4 +1,5 @@
 # coding:utf-8
+from PyQt5 import QtWidgets
 from qfluentwidgets import (SettingCardGroup,
                             OptionsSettingCard, PushSettingCard, ScrollArea,
                             ExpandLayout, CustomColorSettingCard,
@@ -9,7 +10,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QLabel, QFileDialog
 
 from app.Common.StyleSheet import StyleSheet
-from app.Common.config import cfg
+from app.Common.config import cfg, isWin11
 
 
 class Setting(ScrollArea):
@@ -78,6 +79,8 @@ class Setting(ScrollArea):
         self.scrollWidget.setObjectName('scrollWidget')
         self.settingLabel.setObjectName('settingLabel')
         StyleSheet.SETTING.apply(self)
+        self.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.themeCard.setEnabled(isWin11())
 
         # 初始化布局
         self.__initLayout()

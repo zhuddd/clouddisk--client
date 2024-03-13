@@ -60,7 +60,6 @@ class FilePage(QtWidgets.QWidget):
         self.getDir = GetDir()
         self.getDir.update.connect(self.setIconCard)
         self.getDir.err.connect(self.errFunc)
-        self.getDir.get_dir(0)
 
         self.tmp = None  # type:File
         self.wait = None  # type:tuple[File,str]
