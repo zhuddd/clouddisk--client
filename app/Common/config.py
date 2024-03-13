@@ -1,3 +1,4 @@
+import os
 import sys
 from pathlib import Path
 
@@ -23,7 +24,7 @@ class Config(QConfig):
     checkUpdateAtStartUp = ConfigItem("Update", "CheckUpdateAtStartUp", True, BoolValidator())
 
 
-BASE_DIR = Path.cwd()
+BASE_DIR = Path(os.path.dirname(os.path.realpath(sys.argv[0])))
 DAT_PATH = BASE_DIR / "dat"
 STYLE_FILE_PATH = BASE_DIR / "app" / "Resource" / "qss"
 ICON_PATH = BASE_DIR / "app" / "Resource" / "images"

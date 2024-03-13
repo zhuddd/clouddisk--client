@@ -1,9 +1,14 @@
 import ctypes
 import os
-import sys
 import traceback
 import winreg
+import subprocess
+import sys
 
+import psutil
+import win32file
+import pywintypes
+import time
 from PyQt5 import QtCore
 from PyQt5.QtCore import QLocale, QCoreApplication, Qt
 from PyQt5.QtWidgets import QApplication
@@ -28,6 +33,7 @@ def is_admin():
     except:
         return False
 
+
 def is_debug():
     app = sys.argv[0]
     if app.split(".")[-1] == "py":
@@ -37,7 +43,7 @@ def is_debug():
 
 
 def open_app_path():
-    return f"{BASE_DIR}\open.bat"
+    return f"{BASE_DIR}\cloud.exe"
 
 
 def create_registry_entry():
@@ -60,9 +66,9 @@ def set_reg():
     if dataSaver.get("firstTime", True):
         if not is_admin():
             if is_debug():
-                ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, sys.argv[0], None, 1)
+                ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, None, None, 1)
             else:
-                ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.argv[0], sys.argv[0], None, 1)
+                ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.argv[0], None, None, 1)
             return 0
         else:
             create_registry_entry()
@@ -93,7 +99,59 @@ def init_window():
     sys.exit(app.exec_())
 
 
+def connect_to_named_pipe():
+    pipe_name = r'\\.\pipe\cloud'
+    now = time.time()
+    while True:
+        if time.time() - now > 60 * 5:
+            raise Exception("Timeout")
+        try:
+            pipe = win32file.CreateFile(
+                pipe_name,
+                win32file.GENERIC_READ | win32file.GENERIC_WRITE,
+                0,
+                None,
+                win32file.OPEN_EXISTING,
+                0,
+                None
+            )
+            break
+        except pywintypes.error as e:
+            if e.winerror == 2:
+                # Pipe不存在，继续尝试连接
+                time.sleep(1)
+            else:
+                # 其他错误，抛出异常
+                raise e
+    return pipe
+
+
+def is_process_running():
+    current_pid = psutil.Process().pid
+    for proc in psutil.process_iter(['pid', 'name']):
+        if proc.info['pid'] != current_pid and proc.info['name'] == 'cloud.exe':
+            return True
+    return False
+
+
+def send_data_to_process(pipe, data):
+    data = ' '.join(data)
+    data_bytes = data.encode('utf-8')
+    win32file.WriteFile(pipe, data_bytes)
+
+
+def start_process(process_path):
+    try:
+        subprocess.Popen(process_path).wait(1)
+    except Exception as e:
+        print(f"Error starting process: {e}")
+
+
 if __name__ == "__main__":
-    if set_reg() == 1:
-        set_cfg()
-        init_window()
+    if not is_process_running():
+        if set_reg() == 1:
+            set_cfg()
+            init_window()
+    else:
+        pipe = connect_to_named_pipe()
+        send_data_to_process(pipe, sys.argv[1:])

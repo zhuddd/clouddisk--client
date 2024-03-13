@@ -58,8 +58,6 @@ def start_process(process_path):
 if __name__ == "__main__":
     process_name = "cloud.exe"
     process_path = str(Path(sys.argv[0]).resolve().parent / 'cloud.exe')
-    print(process_path)
-    print(sys.argv)
     if not is_process_running(process_name):
         start_process(process_path)
     pipe = connect_to_named_pipe()

@@ -1,3 +1,5 @@
+import sys
+
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
 
@@ -74,6 +76,8 @@ class Home(MSFluentWindow):
             if len(dataSaver.get('user', 'name')) < 5 else
             dataSaver.get('user', 'name')[:5] + '...')
         self.init_pipe()
+        if sys.argv[1:]:
+            self.saveShare(sys.argv[1:])
 
     def setSlot(self):
         self.fileInterface.filePath.connect(self.upLoadInterface.addTask)
