@@ -16,7 +16,7 @@ from qfluentwidgets import FluentTranslator
 
 from app.Common.DataSaver import dataSaver
 from app.Common.ErrorBox import ErrorBox
-from app.Common.config import cfg, BASE_DIR
+from app.Common.config import cfg, BASE_DIR, is_debug
 from app.Index.Verify import Verify
 
 
@@ -34,12 +34,6 @@ def is_admin():
         return False
 
 
-def is_debug():
-    app = sys.argv[0]
-    if app.split(".")[-1] == "py":
-        return True
-    else:
-        return False
 
 
 def open_app_path():

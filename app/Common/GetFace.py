@@ -29,29 +29,28 @@ class GetFace(QThread):
     """
     signal = QtCore.pyqtSignal(bytes)
 
-    def __init__(self, face_id, fid):
+    def __init__(self, face_id, fid, preview=False):
         super(GetFace, self).__init__()
         self.face_id = face_id
         self.fid = fid
         self.req = None
+        self.preview = preview
+        self.tmp_id=str(fid)+("icon" if not self.preview else "preview")
 
     def run(self):
         try:
-            if faceTmp.getface(self.fid):
-                self.signal.emit(faceTmp.getface(self.fid))
+            if faceTmp.getface(self.tmp_id):
+                self.signal.emit(faceTmp.getface(self.tmp_id))
                 return
-            self.req = requests.get(
-                FILE_FACE + "/" + str(self.face_id) + "/icon",
-                cookies=dataSaver.get("cookies", None),
-            )
+            url = FILE_FACE + "/" + str(self.face_id) + ("/icon" if not self.preview else "/preview")
+            self.req = requests.get(url,cookies=dataSaver.get("cookies", None))
             self.success(self.req)
         except Exception as e:
             print("getFace", e)
 
     def success(self, d):
         if d.status_code == 200:
-            faceTmp.setface(self.fid, d.content)
+            faceTmp.setface(self.tmp_id, d.content)
             self.signal.emit(d.content)
         else:
-            faceTmp.setface(self.fid, None)
-
+            faceTmp.setface(self.tmp_id, None)

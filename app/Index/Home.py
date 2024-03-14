@@ -11,7 +11,6 @@ from qfluentwidgets import FluentIcon
 
 from app.Common import config
 from app.Common.DataSaver import dataSaver
-from app.Common.StyleSheet import StyleSheet
 from app.components.RadioMsgBox import RadioMsgBox
 from app.components.HomeTitleBar import HomeTitleBar
 from app.Common.pipe_msg import PipeMsg
@@ -77,7 +76,7 @@ class Home(MSFluentWindow):
             dataSaver.get('user', 'name')[:5] + '...')
         self.init_pipe()
         if sys.argv[1:]:
-            self.saveShare(sys.argv[1:])
+            self.saveShare("".join(sys.argv[1:]))
 
     def setSlot(self):
         self.fileInterface.filePath.connect(self.upLoadInterface.addTask)
@@ -131,11 +130,9 @@ class Home(MSFluentWindow):
     def setFilePreviewPage(self, file: File):
         if self.PreviewPage is None:
             self.PreviewPage = FilePreview(self)
+        if self.PreviewPage.setFile(file):
             self.addSubInterface(self.PreviewPage, FluentIcon.VIEW, '文件预览')
-            self.PreviewPage.full.connect(self.full)
-            self.PreviewPage.download.connect(self.downloadFile)
-        self.PreviewPage.setFile(file)
-        self.stackedWidget.setCurrentWidget(self.PreviewPage)
+            self.stackedWidget.setCurrentWidget(self.PreviewPage)
 
     def setUploadTaskNum(self, num: int):
         if self.upload_num is None:

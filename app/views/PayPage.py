@@ -1,18 +1,15 @@
-import markdown
 import requests
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import Qt, pyqtSignal, QUrl
-from PyQt5.QtGui import QFont
-from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings
+from PyQt5.QtGui import QFont, QDesktopServices
 from PyQt5.QtWidgets import QFrame, QLabel, QVBoxLayout, QStackedWidget
 from qfluentwidgets import FlowLayout, PushButton, ScrollArea, Action, FluentIcon, MenuAnimationType, \
-    RoundMenu, Theme
-from qframelesswindow.webengine import FramelessWebEngineView
+    RoundMenu, TextEdit
 
 from app.Common.DataSaver import dataSaver
 from app.Common.StyleSheet import StyleSheet
 from app.Common.Tost import success, error
-from app.Common.config import PAY_MENU, PAY_INFO, PAY_PAY, PAY_SUCCESS, cfg
+from app.Common.config import PAY_MENU, PAY_INFO, PAY_PAY, PAY_SUCCESS
 
 
 def getMenu():
@@ -26,39 +23,6 @@ def getMenu():
     except Exception as e:
         print(e)
         return []
-
-
-def markdown_to_html(markdown_text, dark_mode=False):
-    if dark_mode:
-        # 在深色模式下使用的 CSS 样式
-        css_style = """
-            <style>
-                body {
-                    background-color: #212834;
-                    color: #fff;
-                }
-                /* 其他样式... */
-            </style>
-        """
-    else:
-        # 在浅色模式下使用的 CSS 样式
-        css_style = """
-            <style>
-                body {
-                    background-color: #fff;
-                    color: #222;
-                }
-                /* 其他样式... */
-            </style>
-        """
-
-    # 将 Markdown 转换为 HTML
-    html_content = markdown.markdown(markdown_text)
-
-    # 将 CSS 样式和 HTML 内容拼接在一起
-    html_with_style = css_style + html_content
-
-    return html_with_style
 
 
 def setStorage(unit: int):
@@ -132,7 +96,8 @@ class PayPage(QFrame):
         self.paytime = None
         self.payCountdown = 300000
         self.remainderTime = 0
-        self.tmp = None  # type:Menu
+        self.menu_tmp = None  # type:Menu
+        self.pay_url_tmp = None # type:QUrl
         self.setObjectName(text.replace(' ', '-'))
         self.base_layout = QVBoxLayout(self)
         self.pages = QStackedWidget(self)
@@ -140,7 +105,6 @@ class PayPage(QFrame):
         self.base_layout.addWidget(self.pages)
         self.menuPage()
         self.infoPage()
-        self.payPage()
         self.pages.setCurrentIndex(0)
         StyleSheet.PAY.apply(self)
         self.setMenu()
@@ -178,12 +142,12 @@ class PayPage(QFrame):
         self.infotitle.setFont(QFont("Microsoft YaHei", 15))
         self.infotitle.setWordWrap(True)
 
-        self.infotext = QWebEngineView(self.infobox)
-        self.infotext.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars, False)
-        self.infotext.setContextMenuPolicy(Qt.NoContextMenu)
+        self.infotext = TextEdit(self.infobox)
+        self.infotext.setFocusPolicy(QtCore.Qt.NoFocus)
+        self.infotext.contextMenuEvent = lambda event: None
 
         self.paybtn = PushButton(self.infobox)
-        self.paybtn.setText("购买")
+        self.paybtn.setText("前往浏览器支付")
         self.paybtn.clicked.connect(self.pay)
         self.backbtn = PushButton(self.infobox)
         self.backbtn.setText("返回")
@@ -200,68 +164,15 @@ class PayPage(QFrame):
         self.infoScrollArea.setWidget(self.infobox)
         self.pages.addWidget(self.infoScrollArea)
 
-    def payPage(self):
-        self.payScrollArea = ScrollArea(self.pages)
-        self.paybox = QtWidgets.QWidget()
-        self.payLayout = QVBoxLayout(self.paybox)
-
-        self.payScrollArea.setWidget(self.paybox)
-        self.payScrollArea.setFrameShape(QFrame.NoFrame)
-        self.payScrollArea.setWidgetResizable(True)
-
-        self.paytitle = QLabel("支付标题", self.paybox)
-        self.paytitle.setFont(QFont("Microsoft YaHei", 15))
-        self.paytitle.setWordWrap(True)
-        self.paytitle.setAlignment(Qt.AlignHCenter)
-
-        self.payinfo = QLabel("支付详细信息", self.paybox)
-        self.payinfo.setFont(QFont("Microsoft YaHei", 12))
-        self.payinfo.setWordWrap(True)
-        self.payinfo.setAlignment(Qt.AlignHCenter)
-
-        self.payid = QLabel("支付订单号", self.paybox)
-        self.payid.setFont(QFont("Microsoft YaHei", 12))
-        self.payid.setWordWrap(True)
-        self.payid.setAlignment(Qt.AlignHCenter)
-
-        self.paytime = QLabel("请在xx秒内完成支付", self.paybox)
-        self.paytime.setFont(QFont("Microsoft YaHei", 12))
-        self.paytime.setWordWrap(True)
-        self.paytime.setAlignment(Qt.AlignHCenter)
-
-        self.qrbox = FramelessWebEngineView(self.paybox)
-        self.qrbox.setFixedSize(200, 200)
-        self.qrbox.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars, False)
-
-        self.payprice = QLabel("支付金额", self.paybox)
-        self.payprice.setFont(QFont("Microsoft YaHei", 15))
-        self.payprice.setWordWrap(True)
-        self.payprice.setAlignment(Qt.AlignHCenter)
-
-        self.paypay = PushButton(self.paybox)
-        self.paypay.setText("返回首页")
-        self.paypay.clicked.connect(self.payback)
-
-        self.payLayout.addWidget(self.paytitle)
-        self.payLayout.addWidget(self.payinfo)
-        self.payLayout.addWidget(self.payid)
-        self.payLayout.addWidget(self.paytime)
-        self.payLayout.addWidget(self.qrbox, alignment=Qt.AlignHCenter)
-        self.payLayout.addWidget(self.payprice)
-        self.payLayout.addWidget(self.paypay)
-        self.pages.addWidget(self.payScrollArea)
-
-    def setInfo(self):
-        if self.tmp is not None:
-            self.infotitle.setText(self.tmp.title)
-            req = requests.get(f"{PAY_INFO}?menu_id={self.tmp.id}")
-            if req.status_code == 200:
-                mode = cfg.get(cfg.themeMode) == Theme.DARK
-                self.infotext.setHtml(markdown_to_html(req.json()['data'], mode))
-            else:
-                self.back()
+    def setInfo(self, menu: Menu):
+        self.menu_tmp = menu
+        self.infotitle.setText(self.menu_tmp.title)
+        req = requests.get(f"{PAY_INFO}?menu_id={self.menu_tmp.id}")
+        if req.status_code == 200:
+            self.infotext.setMarkdown(req.json()['data'])
+            self.pages.setCurrentIndex(1)
         else:
-            self.pages.setCurrentIndex(0)
+            error(self, "获取信息失败")
 
     def setMenu(self):
         self.menu = getMenu()
@@ -269,53 +180,23 @@ class PayPage(QFrame):
         for menu in self.menu:
             btn = MenuCard(self, menu)
 
-            btn.clicked.connect(self.clicked)
+            btn.clicked.connect(self.setInfo)
             self.flowLayout.addWidget(btn)
 
-    def setPay(self, data: dict):
-        self.qrbox.setUrl(QUrl(data['url']))
-        self.paytitle.setText(data['title'])
-        self.payinfo.setText(data['info'])
-        self.payprice.setText(f"金额：<a style='font-size:20px;font-weight:bold;color:red;'>{data['price']}</a>")
-        self.payid.setText(f"订单号：{data['id']}")
-        self.order_id = data['id']
-
-    def clicked(self, menu: Menu):
-        self.tmp = menu
-        self.setInfo()
-        self.pages.setCurrentIndex(1)
+    def pay(self):
+        if self.pay_url_tmp is not None:
+            QDesktopServices.openUrl(self.pay_url_tmp)
+            return
+        req = requests.get(f"{PAY_PAY}?menu_id={self.menu_tmp.id}", cookies=dataSaver.get("cookies"))
+        if req.status_code == 200:
+            self.pay_url_tmp=QUrl(req.json()['data']['url'])
+            QDesktopServices.openUrl(self.pay_url_tmp)
+            self.order_id = req.json()['data']['id']
+        else:
+            error(self, "支付创建失败")
 
     def back(self):
         self.pages.setCurrentIndex(0)
-
-    def pay(self):
-        req = requests.get(f"{PAY_PAY}?menu_id={self.tmp.id}", cookies=dataSaver.get("cookies"))
-        if req.status_code == 200:
-            self.qrbox.setHtml("")
-            self.setPay(req.json()['data'])
-            self.pages.setCurrentIndex(2)
-            self.remainderTime = self.payCountdown
-            self.paytime.setText(
-                f"请在<a style='font-size:20px;font-weight:bold;color:red;'>{self.remainderTime // 1000}</a>秒内完成支付")
-
-            if self.remainder is not None:
-                self.remainder.stop()
-                self.remainder.deleteLater()
-            self.remainder = QtCore.QTimer()
-            self.remainder.timeout.connect(self.payTime)
-            self.remainder.start(1000)
-
-            if self.backtime is not None:
-                self.backtime.stop()
-                self.backtime.deleteLater()
-            self.backtime = QtCore.QTimer()
-            self.backtime.timeout.connect(self.payback)
-            self.backtime.setSingleShot(True)
-            self.backtime.start(self.payCountdown)
-
-    def payback(self):
-        self.pages.setCurrentIndex(0)
-        self.qrbox.setHtml("")
         if self.order_id is not None:
             req = requests.get(f"{PAY_SUCCESS}?order_id={self.order_id}", cookies=dataSaver.get("cookies"))
             if req.status_code == 200:
@@ -324,15 +205,9 @@ class PayPage(QFrame):
                     success(self, "支付成功")
                 else:
                     error(self, "支付失败")
-
-    def payTime(self):
-        self.remainderTime -= 1000
-        self.paytime.setText(
-            f"请在<a style='font-size:20px;font-weight:bold;color:red;'>{self.remainderTime // 1000}</a>秒内完成支付")
-        if self.remainderTime <= 0:
-            self.remainder.stop()
-            self.remainder.deleteLater()
-            self.remainder = None
+        self.order_id = None
+        self.pay_url_tmp = None
+        self.menu_tmp = None
 
     def on_page_changed(self, index):
         if index == 0:

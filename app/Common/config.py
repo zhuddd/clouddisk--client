@@ -4,8 +4,11 @@ from pathlib import Path
 
 from qfluentwidgets import (qconfig, QConfig, ConfigItem, OptionsConfigItem, BoolValidator,
                             OptionsValidator, Theme, FolderValidator)
+
+
 def isWin11():
     return sys.platform == 'win32' and sys.getwindowsversion().build >= 22000
+
 
 def DownloadDir():
     import winreg
@@ -16,6 +19,14 @@ def DownloadDir():
     return download_dir
 
 
+def is_debug():
+    app = sys.argv[0]
+    if app.split(".")[-1] == "py":
+        return True
+    else:
+        return False
+
+
 class Config(QConfig):
     """ Config of application """
     downloadFolder = ConfigItem("Folders", "Download", DownloadDir(), FolderValidator())
@@ -24,7 +35,10 @@ class Config(QConfig):
     checkUpdateAtStartUp = ConfigItem("Update", "CheckUpdateAtStartUp", True, BoolValidator())
 
 
-BASE_DIR = Path(os.path.dirname(os.path.realpath(sys.argv[0])))
+if is_debug():
+    BASE_DIR = Path(__file__).resolve().parent.parent.parent
+else:
+    BASE_DIR = Path(os.path.dirname(os.path.realpath(sys.argv[0])))
 DAT_PATH = BASE_DIR / "dat"
 STYLE_FILE_PATH = BASE_DIR / "app" / "Resource" / "qss"
 ICON_PATH = BASE_DIR / "app" / "Resource" / "images"
@@ -85,8 +99,14 @@ FILE_PASTE = BASE_URL + "/api/file/paste"
 FILE_NEWFOLDER = BASE_URL + "/api/file/newfolder"
 '''新建文件夹 URL 地址'''
 
+FILE_PREVIEW_POSTER = BASE_URL + "/api/file/poster"
+'''文件预览海报 URL 地址'''
+
 FILE_PREVIEW = BASE_URL + "/preview"
 '''文件预览 URL 地址'''
+
+FILE_PREVIEW_DATA = BASE_URL + "/data"
+'''文件预览数据 URL 地址'''
 
 FILE_GET_KEY = BASE_URL + "/api/file/getkey"
 '''获取文件预览密钥 URL 地址'''

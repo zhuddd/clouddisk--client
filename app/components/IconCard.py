@@ -20,6 +20,7 @@ class IconCard(SimpleCardWidget):
 
     def __init__(self, parent=None, file: File = None):
         super().__init__(parent)
+        self.get_face = None
         self.shadowAni = DropShadowAnimation(self, hoverColor=QColor(0, 0, 0, 20))
         self.shadowAni.setOffset(0, 5)
         self.shadowAni.setBlurRadius(38)
@@ -31,25 +32,17 @@ class IconCard(SimpleCardWidget):
         self.setBorderRadius(8)
         self.file = file
         self.iconWidget = IconWidget(self.file.icon, self)
-        # self.iconWidget = IconWidget(self)
         self.label = CaptionLabel(self.file.name if len(self.file.name) <= 10 else self.file.name[:10] + "...", self)
-
-        self.iconWidget.setFixedSize(68, 68)
 
         self.vBoxLayout = QVBoxLayout(self)
         self.vBoxLayout.setAlignment(Qt.AlignCenter)
         self.vBoxLayout.addStretch(1)
         self.vBoxLayout.addWidget(self.iconWidget, 0, Qt.AlignCenter)
         self.vBoxLayout.addStretch(1)
-        self.vBoxLayout.addWidget(
-            self.label, 0, Qt.AlignHCenter | Qt.AlignBottom)
+        self.vBoxLayout.addWidget(self.label, 0, Qt.AlignHCenter | Qt.AlignBottom)
 
         self.setFixedSize(120, 120)
         self.setTip()
-        if self.file.face is None or self.file.face is True:
-            self.get_face = GetFace(self.file.id, self.file.fid)
-            self.get_face.signal.connect(self.setIcon)
-            self.get_face.start()
 
     def setIcon(self, icon: Union[QIcon, str, FluentIconBase, bytes]):
         if isinstance(icon, bytes):
@@ -107,3 +100,14 @@ class IconCard(SimpleCardWidget):
 
     def _pressedBackgroundColor(self):
         return QColor(255, 255, 255, 6 if isDarkTheme() else 118)
+
+    def resizeEvent(self, a0):
+        super().resizeEvent(a0)
+        size = self.size()
+        n = int(size.width() / 12)
+        self.iconWidget.setFixedSize(size.width() - 60, size.width() - 60)
+        self.label.setText(self.file.name if len(self.file.name) <= n else self.file.name[:n] + "...")
+        self.get_face = None
+        self.get_face = GetFace(self.file.id, self.file.fid, size.width() > 300)
+        self.get_face.signal.connect(self.setIcon)
+        self.get_face.start()

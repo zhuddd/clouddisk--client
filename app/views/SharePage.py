@@ -3,7 +3,7 @@ from PyQt5 import QtWidgets
 from PyQt5.QtCore import QDate, Qt
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout
-from qfluentwidgets import ZhDatePicker, RadioButton, LineEdit, PushButton, CaptionLabel
+from qfluentwidgets import  RadioButton, LineEdit, PushButton, CaptionLabel, CalendarPicker
 
 from app.Common import config
 from app.Common.DataSaver import dataSaver
@@ -27,7 +27,7 @@ class SharePage(IndependentWindow):
         self.set_time = RadioButton('永久有效', self.time_picker_box)
         self.set_time.setChecked(True)
         self.set_time2 = RadioButton('自定义时间', self.time_picker_box)
-        self.timePicker = ZhDatePicker(self.time_picker_box)
+        self.timePicker = CalendarPicker(self.time_picker_box)
         self.timePicker.setDisabled(True)
         self.time_picker_layout.addWidget(self.nameLabel1)
         self.time_picker_layout.addWidget(self.set_time)
