@@ -25,6 +25,10 @@ class FilePreview(QWidget):
             media = Media.Video(file, self.parent())
             media.openBrowser()
             return False
+        elif file.type == "file_pdf":
+            media = Media.Pdf(file, self.parent())
+            media.openBrowser()
+            return False
         else:
             error(self.parent(), "文件预览失败,不支持的文件类型")
             return False

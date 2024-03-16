@@ -92,14 +92,17 @@ class Video(MediaBase):
     def __init__(self, file: File, parent=None):
         super().__init__(file, parent)
 
+class Pdf(MediaBase):
+    def __init__(self, file: File, parent=None):
+        super().__init__(file, parent)
 
-if __name__ == '__main__':
-    QApplication.setHighDpiScaleFactorRoundingPolicy(
-        Qt.HighDpiScaleFactorRoundingPolicy.PassThrough)
-    QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
-    QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps)
-
-    app = QApplication([])
-    music = Music(File({"Id": 1096}))
-    music.show()
-    sys.exit(app.exec())
+# if __name__ == '__main__':
+#     QApplication.setHighDpiScaleFactorRoundingPolicy(
+#         Qt.HighDpiScaleFactorRoundingPolicy.PassThrough)
+#     QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
+#     QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps)
+#
+#     app = QApplication([])
+#     music = Music(File({"Id": 1096}))
+#     music.show()
+#     sys.exit(app.exec())

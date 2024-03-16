@@ -60,7 +60,7 @@ def set_reg():
     if dataSaver.get("firstTime", True):
         if not is_admin():
             if is_debug():
-                ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, None, None, 1)
+                ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, sys.argv[0], None, 1)
             else:
                 ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.argv[0], None, None, 1)
             return 0
