@@ -6,6 +6,9 @@ import pickle
 from app.Common.config import DAT_PATH
 
 
+
+
+
 class DataSaver:
     """
     保存数据
@@ -22,7 +25,7 @@ class DataSaver:
                 "accounts": [],
             }
         else:
-            self.data = loaded_data
+            self.data =loaded_data
 
     def save(self):
         with open(DAT_PATH, 'wb') as file:

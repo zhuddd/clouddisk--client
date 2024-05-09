@@ -56,7 +56,7 @@ class IconCard(SimpleCardWidget):
 
     def setTip(self):
         size = convert_size(self.file.size)
-        tip = f"{self.file.name}\n上传时间：{self.file.time}"
+        tip = f"{self.file.name}\n创建时间：{self.file.time}"
         if size[0] != 0:
             tip += f"\n文件大小：{size[0]}{size[1]}"
         self.setToolTip(tip)

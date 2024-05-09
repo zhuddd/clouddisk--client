@@ -3,10 +3,10 @@
         "CheckUpdateAtStartUp": true
     },
     "Folders": {
-        "Download": "d:/Downloads"
+        "Download": "C:/Users/zhu21/Downloads"
     },
     "MainWindow": {
-        "DpiScale": "Auto"
+        "DpiScale": 1.25
     },
     "QFluentWidgets": {
         "ThemeColor": "#ff009faa",

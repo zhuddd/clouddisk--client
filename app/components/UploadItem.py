@@ -1,4 +1,5 @@
 import json
+import time
 from pathlib import Path
 
 from PyQt5 import QtWidgets
@@ -37,7 +38,9 @@ class UploadItem(QtWidgets.QWidget, UpDownItem):
         self.uploaded = 0
         self.size_last = 0
         self.total_size = 0
-        self.chunk_size = 1024 * 1024 * 100
+        self.chunk_size = 1024 * 1024 * 5  # 5MB
+        self.chunk_size_U = 0
+        self.chunk_start_time = 0
         self.chunk_hash = None
         self.statu = Status.NOT_STARTED
         self.manager = dataSaver.QNetworkAccessManager_cookies()
@@ -114,11 +117,12 @@ class UploadItem(QtWidgets.QWidget, UpDownItem):
         else:
             self.file.open(QFile.ReadOnly)
             self.file.seek(self.start_byte)
-            chunk = self.file.read(self.chunk_size)
+            chunk = self.file.read(max(self.chunk_size, self.chunk_size_U))
             self.file.close()
             self.chunk_hash = get_file_hash_file(chunk)
             self.reply = self.manager.post(self.newQNetworkRequest(), chunk)
             self.reply.uploadProgress.connect(self.uploadProgress)
+            self.chunk_start_time=int(time.time())
             if not self.timer.isActive():
                 self.timer.start(1000)
 
@@ -150,7 +154,7 @@ class UploadItem(QtWidgets.QWidget, UpDownItem):
         self.size_last = self.uploaded
         self.info.setText(f"{speed[0]} {speed[1]}/S")
 
-    def uploadProgress(self, bytesSent, bytesTotal):
+    def uploadProgress(self, bytesSent):
         if self.total_size <= 0:
             return
         self.uploaded = self.start_byte + bytesSent
@@ -167,9 +171,12 @@ class UploadItem(QtWidgets.QWidget, UpDownItem):
         data = reply.readAll().data()
         if reply.error() == QNetworkReply.NoError:
             data = json.loads(data)['data']
+            print(data)
             self.start_byte = data["upload_size"]
             self.info.setText(data["message"])
             if data["next"]:
+                t=int(time.time())-self.chunk_start_time
+                self.chunk_size_U = int(max(self.chunk_size,self.chunk_size_U) / t)*60
                 self.start()
             else:
                 self.timer.stop()
@@ -179,7 +186,6 @@ class UploadItem(QtWidgets.QWidget, UpDownItem):
         else:
             try:
                 data = json.loads(data)
-                print(data)
                 self.info.setText(data["data"])
             except:
                 self.info.setText("上传失败")

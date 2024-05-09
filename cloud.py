@@ -142,10 +142,14 @@ def start_process(process_path):
 
 
 if __name__ == "__main__":
-    if not is_process_running():
-        if set_reg() == 1:
-            set_cfg()
-            init_window()
+    if is_debug():
+        set_cfg()
+        init_window()
     else:
-        pipe = connect_to_named_pipe()
-        send_data_to_process(pipe, sys.argv[1:])
+        if not is_process_running():
+            if set_reg() == 1:
+                set_cfg()
+                init_window()
+        else:
+            pipe = connect_to_named_pipe()
+            send_data_to_process(pipe, sys.argv[1:])

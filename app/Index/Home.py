@@ -66,6 +66,7 @@ class Home(MSFluentWindow):
         self.pipe.start()
 
     def init_page(self):
+        self.systemTray.show()
         self.fileInterface.getDir.get_dir(0)
         self.ShareListInterface.updateList()
         self.downLoadInterface.init()
@@ -117,7 +118,7 @@ class Home(MSFluentWindow):
         self.addSubInterface(self.ShareListInterface, FluentIcon.SHARE, '分享列表', FluentIcon.SHARE)
         self.addSubInterface(self.upLoadInterface, FluentIcon.SEND, '上传')
         self.addSubInterface(self.downLoadInterface, FluentIcon.DOWNLOAD, '下载')
-        self.addSubInterface(self.payInterface, FluentIcon.SHOPPING_CART, '充值')
+        self.addSubInterface(self.payInterface, FluentIcon.SHOPPING_CART, '订阅')
         self.navigationInterface.addWidget(
             routeKey='user',
             widget=self.userInterface,
@@ -185,7 +186,6 @@ class Home(MSFluentWindow):
         w, h = desktop.width(), desktop.height()
         self.move(w // 2 - self.width() // 2, h // 2 - self.height() // 2)
         self.systemTray = SystemTray(self)
-        self.systemTray.show()
 
     def userInfo(self):
         menu = RoundMenu(parent=self)
@@ -198,7 +198,8 @@ class Home(MSFluentWindow):
         dataSaver.set("cookies", None)
         self.verify = Verify()
         self.verify.show()
-        super().close()
+        self.systemTray.deleteLater()
+        self.trayClose()
 
     def full(self, e):
         if e:
@@ -221,8 +222,7 @@ class Home(MSFluentWindow):
                         parent=self)
         if w.exec():
             if w.isquit() == 1:
-                self.pipe.stop()
-                super().close()
+                self.trayClose()
             else:
                 self.hide()
 

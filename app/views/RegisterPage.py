@@ -54,6 +54,9 @@ class RegisterPage(QtWidgets.QWidget):
         if password != password2 or password == "":
             warning(self, "密码不一致或为空")
             return
+        if len(password) < 7:
+            warning(self, "密码长度不能小于7位")
+            return
         password = hashlib.md5(password.encode()).hexdigest()
         if not self.request or not self.request.isRunning():
             self.pushbutton.setDisabled(True)

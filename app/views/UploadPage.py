@@ -96,11 +96,12 @@ class UploadPage(QtWidgets.QWidget, UpDown):
                     n -= 1
 
     def addTask(self, path):
+        print(path)
         tree, path_list = create_tree(path[0])
-        self.path_list.update(path_list)
-        if len(self.path_list) >= 200:
+        if len(self.path_list)+len(path_list) >= 200:
             error(self.parent(), "文件数量过多")
             return
+        self.path_list.update(path_list)
         data = QtCore.QByteArray()
         data.append(f"tree={json.dumps(tree)}&p={path[1]}")
         self.reply = self.manager.post(QNetworkRequest(QUrl(FILE_UPLOAD_DIR)), data)

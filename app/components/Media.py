@@ -1,10 +1,9 @@
-import sys
 
+import requests
 from PyQt5.QtCore import QUrl, Qt, QByteArray
 from PyQt5.QtGui import QDesktopServices, QIcon, QPixmap
-from PyQt5.QtWidgets import QVBoxLayout, QApplication, QWidget, QFrame, QLabel
-from qfluentwidgets import HyperlinkButton, IconWidget, PixmapLabel, SmoothScrollArea
-from qfluentwidgets.components.widgets.acrylic_label import AcrylicLabel
+from PyQt5.QtWidgets import QVBoxLayout, QWidget
+from qfluentwidgets import HyperlinkButton, IconWidget, TextEdit
 from qfluentwidgets.multimedia import StandardMediaPlayBar
 
 from app.Common.File import File
@@ -18,6 +17,7 @@ class MediaBase(QWidget, PreviewBase):
 
     def __init__(self, file: File, parent=None):
         super().__init__(parent=parent)
+        self.tag = False
         self.file = file
         self.set_file(file)
         self.vBoxLayout = QVBoxLayout(self)
@@ -41,6 +41,7 @@ class Music(MediaBase):
 
     def __init__(self, file: File, parent=None):
         super().__init__(file, parent)
+        self.tag = True
         self.icon = IconCard(self, file)
         self.icon.setFixedSize(500, 500)
         self.standardPlayBar = StandardMediaPlayBar(self)
@@ -61,6 +62,7 @@ class Music(MediaBase):
 class Picture(MediaBase):
     def __init__(self, file: File, parent=None):
         super().__init__(file, parent)
+        self.tag = True
         self.vBoxLayout.setSpacing(0)
         self.picture = IconWidget(self)
 
@@ -77,7 +79,7 @@ class Picture(MediaBase):
         if pixmap.isNull():
             error(self, "文件预览失败")
             return
-        img=QIcon(pixmap)
+        img = QIcon(pixmap)
         self.picture.setIcon(img)
 
     def resizeEvent(self, a0):
@@ -86,15 +88,36 @@ class Picture(MediaBase):
         self.picture.setFixedSize(size.width() - 60, size.height() - 60)
 
 
-
-
 class Video(MediaBase):
     def __init__(self, file: File, parent=None):
         super().__init__(file, parent)
+        self.openBrowser()
+
 
 class Pdf(MediaBase):
     def __init__(self, file: File, parent=None):
         super().__init__(file, parent)
+        self.openBrowser()
+
+
+class Text(MediaBase):
+    def __init__(self, file: File, parent=None):
+        super().__init__(file, parent)
+        self.tag = True
+        self.textPreview = TextEdit(self)
+        self.textPreview.setReadOnly(True)
+        self.vBoxLayout.addWidget(self.textPreview)
+        self.loadText()
+
+    def loadText(self):
+        response = requests.get(self.data_path)
+        if response.status_code == 200:
+            text = response.content.decode('utf-8')
+            self.textPreview.setText(text)
+        else:
+            self.tag = False
+            error(self, "文件预览失败")
+            self.openBrowser()
 
 # if __name__ == '__main__':
 #     QApplication.setHighDpiScaleFactorRoundingPolicy(

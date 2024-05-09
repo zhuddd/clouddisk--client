@@ -92,6 +92,9 @@ class UpdatePassword(QWidget):
         if self.password_edit.text() != self.password_edit2.text():
             warning(self, "两次密码不一致")
             return
+        if len(self.password_edit.text()) < 7:
+            warning(self, "密码长度不能小于7位")
+            return
         password = hashlib.md5(self.password_edit.text().encode()).hexdigest()
         req = requests.post(config.UPDATE_PASSWORD_URL,
                             data={"email": self.email_edit.text(),

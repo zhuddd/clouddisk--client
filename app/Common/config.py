@@ -49,6 +49,7 @@ CONFIG = BASE_DIR / "config" / "config.json"
 # BASE_URL = "http://110.40.174.23"
 
 BASE_URL = "http://cloud.zhuddd.icu"
+# BASE_URL = "http://127.0.0.1"
 '''定义基础 URL 地址'''
 
 LOGIN_URL = BASE_URL + "/api/account/login"
@@ -137,6 +138,9 @@ PAY_PAY = BASE_URL + "/api/pay/pay"
 
 PAY_SUCCESS = BASE_URL + "/api/pay/paysuccess"
 '''支付验证 URL 地址'''
+
+PAY_HISTORY = BASE_URL + "/api/pay/history"
+'''支付历史 URL 地址'''
 
 cfg = Config()
 cfg.themeMode.value = Theme.AUTO

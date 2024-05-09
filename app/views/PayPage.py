@@ -48,7 +48,7 @@ class Menu:
         self.price = (data["Price"]) / 100
         self.valid_time = f'{data["ValidTime"]}天' if data["ValidTime"] != -1 else "永久有效"
         self.start_time = data["StartTime"]
-        self.end_time = f'限时: {data["EndTime"]} 结束' if data["EndTime"] != "9999-12-31" else "长期有效"
+        self.end_time = f'套餐限时: {data["EndTime"]} 结束' if data["EndTime"] != "9999-12-31" else "套餐长期有效"
 
 
 class MenuCard(PushButton):
